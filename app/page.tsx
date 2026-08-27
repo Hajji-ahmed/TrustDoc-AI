@@ -1,9 +1,15 @@
 'use client'
 
-import { Card } from '@/components/ui/Card'
+import { useState } from 'react'
+import { Card, CardHeader } from '@/components/ui/Card'
 import { EmptyState } from '@/components/states/EmptyState'
+import { UploadZone } from '@/components/UploadZone'
+import { DocumentPreview } from '@/components/DocumentPreview'
+import type { PreparedDocument } from '@/lib/pdf'
 
 export default function DashboardPage() {
+  const [document, setDocument] = useState<PreparedDocument | null>(null)
+
   return (
     <div className="min-h-screen">
       <header className="border-b border-[var(--color-line)] bg-[var(--color-surface)]">
@@ -25,10 +31,12 @@ export default function DashboardPage() {
       <main className="mx-auto max-w-7xl px-6 py-8">
         <div className="grid gap-6 lg:grid-cols-5">
           <section className="lg:col-span-2">
-            <Card className="p-5">
-              <p className="text-sm text-[var(--color-ink-muted)]">
-                Zone de dépôt — implémentée en tâche 3.
-              </p>
+            <Card>
+              <CardHeader title="Document à contrôler" />
+              <div className="space-y-4 p-5">
+                <UploadZone onPrepared={setDocument} disabled={false} />
+                {document ? <DocumentPreview document={document} /> : null}
+              </div>
             </Card>
           </section>
           <section className="lg:col-span-3">
