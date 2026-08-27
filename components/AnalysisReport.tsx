@@ -38,11 +38,9 @@ export function RecommendationBanner({ recommendation }: { recommendation: Recom
 
 export function AnalysisExplanation({ explanation }: { explanation: string }) {
   return (
-    <Card className="flex min-h-0 flex-col overflow-hidden">
-      <div className="shrink-0">
-        <CardHeader title="Analyse détaillée" />
-      </div>
-      <div className="min-h-0 flex-1 space-y-3 overflow-y-auto px-5 py-4">
+    <Card>
+      <CardHeader title="Analyse détaillée" />
+      <div className="space-y-3 px-5 py-4">
         <p className="whitespace-pre-line text-sm leading-relaxed text-[var(--color-ink-muted)]">
           {explanation}
         </p>

@@ -71,11 +71,8 @@ export default function DashboardPage() {
   }
 
   return (
-    // Sur écran large, la page ne défile pas : seuls les panneaux défilent.
-    // En dessous de 1024 px, on repasse en défilement normal — forcer tout
-    // dans un écran de portable rendrait le texte illisible.
-    <div className="flex min-h-screen flex-col lg:h-screen lg:min-h-0 lg:overflow-hidden">
-      <header className="shrink-0 bg-[var(--color-brand)]">
+    <div className="min-h-screen">
+      <header className="bg-[var(--color-brand)]">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
           <div className="flex items-center gap-2.5">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/10 text-xs font-bold text-white">
@@ -97,17 +94,13 @@ export default function DashboardPage() {
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-7xl flex-1 px-6 py-6 lg:min-h-0">
-        <div className="grid gap-6 lg:h-full lg:grid-cols-5">
-          <section className="lg:col-span-2 lg:min-h-0">
-            <Card className="flex flex-col lg:h-full">
-              <div className="shrink-0">
-                <CardHeader title="Document à contrôler" />
-              </div>
-              <div className="flex min-h-0 flex-1 flex-col gap-4 p-5">
-                <div className="shrink-0">
-                  <UploadZone onPrepared={handlePrepared} disabled={status === 'analyzing'} />
-                </div>
+      <main className="mx-auto w-full max-w-7xl px-6 py-8">
+        <div className="grid gap-6 lg:grid-cols-5">
+          <section className="lg:col-span-2">
+            <Card>
+              <CardHeader title="Document à contrôler" />
+              <div className="space-y-4 p-5">
+                <UploadZone onPrepared={handlePrepared} disabled={status === 'analyzing'} />
                 {preparedDocument ? (
                   <DocumentPreview
                     document={preparedDocument}
@@ -117,40 +110,36 @@ export default function DashboardPage() {
                     onHoverElement={setActiveElementId}
                   />
                 ) : null}
-                <div className="shrink-0">
-                  <Button
-                    onClick={() => void runAnalysis()}
-                    disabled={!preparedDocument || status === 'analyzing'}
-                  >
-                    {status === 'analyzing' ? 'Analyse en cours…' : 'Analyser le document'}
-                  </Button>
-                </div>
+                <Button
+                  onClick={() => void runAnalysis()}
+                  disabled={!preparedDocument || status === 'analyzing'}
+                >
+                  {status === 'analyzing' ? 'Analyse en cours…' : 'Analyser le document'}
+                </Button>
               </div>
             </Card>
           </section>
 
-          <section className="lg:col-span-3 lg:min-h-0">
+          <section className="lg:col-span-3">
             {status === 'analyzing' ? (
-              <Card className="lg:flex lg:h-full lg:items-center lg:justify-center">
+              <Card>
                 <LoadingState />
               </Card>
             ) : status === 'error' ? (
-              <Card className="lg:flex lg:h-full lg:items-center lg:justify-center">
+              <Card>
                 <ErrorState message={errorMessage} onRetry={() => void runAnalysis()} />
               </Card>
             ) : status === 'success' && result ? (
-              <div className="flex flex-col gap-4 lg:h-full lg:min-h-0">
-                <Card className="shrink-0">
+              <div className="space-y-6">
+                <Card>
                   <RiskScoreCard
                     score={result.riskScore}
                     level={result.riskLevel}
                     documentType={result.detectedDocumentType}
                   />
                 </Card>
-                <div className="shrink-0 overflow-y-auto lg:max-h-40">
-                  <RecommendationBanner recommendation={result.recommendation} />
-                </div>
-                <div className="grid gap-4 lg:min-h-0 lg:flex-1 xl:grid-cols-2">
+                <RecommendationBanner recommendation={result.recommendation} />
+                <div className="grid gap-6 xl:grid-cols-2">
                   <ExtractedFields fields={result.extractedInformation} />
                   <SuspiciousElements
                     elements={result.suspiciousElements}
@@ -159,12 +148,10 @@ export default function DashboardPage() {
                     onHoverElement={setActiveElementId}
                   />
                 </div>
-                <div className="shrink-0 lg:h-36">
-                  <AnalysisExplanation explanation={result.explanation} />
-                </div>
+                <AnalysisExplanation explanation={result.explanation} />
               </div>
             ) : (
-              <Card className="lg:flex lg:h-full lg:items-center lg:justify-center">
+              <Card>
                 <EmptyState />
               </Card>
             )}

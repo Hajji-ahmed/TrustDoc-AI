@@ -27,21 +27,19 @@ export function SuspiciousElements({
   const numbers = regionNumbers(regions, elements)
 
   return (
-    <Card className="flex min-h-0 flex-col overflow-hidden">
-      <div className="shrink-0">
-        <CardHeader
-          title="Éléments suspects"
-          subtitle={`${elements.length} anomalie${elements.length > 1 ? 's' : ''} détectée${
-            elements.length > 1 ? 's' : ''
-          }`}
+    <Card>
+      <CardHeader
+        title="Éléments suspects"
+        subtitle={`${elements.length} anomalie${elements.length > 1 ? 's' : ''} détectée${
+          elements.length > 1 ? 's' : ''
+        }`}
         />
-      </div>
       {elements.length === 0 ? (
         <p className="p-5 text-sm text-[var(--color-ink-muted)]">
           Aucune anomalie n&apos;a été détectée sur ce document.
         </p>
       ) : (
-        <ul className="min-h-0 flex-1 divide-y divide-[var(--color-line)] overflow-y-auto">
+        <ul className="divide-y divide-[var(--color-line)]">
           {elements.map((element) => {
             const number = numbers.get(element.id)
             return (
