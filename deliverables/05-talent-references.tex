@@ -1,0 +1,168 @@
+% DocShield AI — Talent References
+% SUM 72H Build Challenge — Deliverable 05
+% Compile: pdflatex 05-talent-references.tex  (twice)
+
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=16mm,top=14mm,bottom=12mm]{geometry}
+
+\usepackage{charter}
+\usepackage[activate={true,nocompatibility},final,tracking=true,
+            factor=1100,stretch=12,shrink=12]{microtype}
+
+\usepackage{amssymb}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage[most]{tcolorbox}
+\usepackage[hidelinks]{hyperref}
+
+\definecolor{navy}{HTML}{123A5F}
+\definecolor{steel}{HTML}{3E6D9C}
+\definecolor{good}{HTML}{1B6E4F}
+\definecolor{goodbg}{HTML}{F1F8F4}
+\definecolor{ink}{HTML}{16202A}
+\definecolor{muted}{HTML}{68727E}
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{3pt}
+\color{ink}
+
+%% ------------------------------------------------------ encadrés à onglet
+\tcbset{
+  callout/.style={
+    enhanced, sharp corners=downhill, arc=1.5pt,
+    colback=white, boxrule=0.8pt,
+    left=6pt, right=6pt, top=8pt, bottom=6pt,
+    attach boxed title to top left={xshift=7pt, yshift=-\tcboxedtitleheight/2},
+    boxed title style={arc=1pt, boxrule=0pt, left=5pt, right=5pt,
+                       top=1.5pt, bottom=1.5pt},
+    fonttitle=\footnotesize\bfseries\color{white},
+  }
+}
+
+\newtcolorbox{note}[1]{callout, colframe=navy, colbacktitle=navy, title={#1}}
+\newtcolorbox{person}[1]{callout, colframe=navy, colbacktitle=navy, title={#1}}
+\newtcolorbox{gapbox}[1]{callout, colframe=good, colback=goodbg,
+  colbacktitle=good, title={#1}}
+
+\newcommand{\heading}[2]{%
+  \par\vspace{8pt}{\color{navy}\bfseries #1\hspace{6pt}#2}\par\vspace{-3pt}}
+
+% Libellé en attaque de paragraphe : compact, et sans le décalage vertical
+% qu'une grille à deux colonnes introduit entre le libellé et sa valeur.
+\newcommand{\fld}[1]{\textbf{\color{navy}#1}\hspace{5pt}}
+
+\begin{document}
+
+%% ------------------------------------------------------ en-tête
+\noindent
+\begin{minipage}[b]{0.62\linewidth}
+  \colorbox{navy}{\makebox[7mm][c]{\rule[-2pt]{0pt}{12pt}\color{white}\bfseries 05}}%
+  \hspace{5pt}{\Large\bfseries\color{navy}Talent References}\\[3pt]
+  \hspace{12mm}{\color{muted}Who I would build DocShield AI with}
+\end{minipage}\hfill
+\begin{minipage}[b]{0.36\linewidth}
+  \raggedleft\footnotesize\color{muted}
+  SUM 72H Build Challenge\\[1pt]
+  Deliverable 05 --- Talent References\\[1pt]
+  Ahmed Hajji \ $\cdot$ \ Individual
+\end{minipage}
+
+\vspace{5pt}
+\textcolor{navy}{\rule{\linewidth}{1pt}}
+
+%% ------------------------------------------------------ cadrage
+\heading{}{Selection logic}
+
+I did not pick the strongest engineers I know. I picked the three people who
+close the three weaknesses the 72-hour build actually exposed.
+
+\vspace{2pt}
+\begin{gapbox}{Gaps the prototype revealed}
+\fld{Usability} Demo results were once mistaken for a real analysis because the
+warning was not visible enough. A screening tool that misleads its own user fails.
+
+\fld{Fraud expertise} An AI-generated invoice scored low risk. Knowing which
+fraud patterns matter, and what a false positive costs, is domain knowledge I do
+not have.
+
+\fld{Production} No rate limiting, a payload ceiling on the host, no
+persistence. The prototype runs; it is not yet a service.
+\end{gapbox}
+
+%% ------------------------------------------------------ 1
+\heading{1.}{Product and user experience}
+
+\begin{person}{Mohamed Sadik Derbi \ $\cdot$ \ Product / UX Engineer}
+\fld{Contact} +212 651 843 140 \ $\cdot$ \
+\href{https://www.linkedin.com/in/mohamed-sadikderbi/}{linkedin.com/in/mohamed-sadikderbi}
+
+\fld{Key capability} Product thinking, UX/UI design, full-stack development.
+
+\fld{Why him} DocShield produces a correct analysis that a reviewer can still
+misread. Turning a risk score into a decision someone trusts is a product
+problem, not a model problem --- and it is the part I am weakest on.
+
+\fld{Role} Design the verification workflow, the evidence presentation and the
+reviewer's decision path.
+
+\fld{Potential} He works across product and engineering, so he can argue with
+the constraint instead of designing around it. That combination is rare, and it
+is what turns a technical result into a usable one.
+\end{person}
+
+%% ------------------------------------------------------ 2
+\heading{2.}{Fraud and security}
+
+\begin{person}{Abderrazak Hajji \ $\cdot$ \ Cybersecurity / Fraud Specialist}
+\fld{Contact} +212 620 671 238 \ $\cdot$ \
+\href{https://www.linkedin.com/in/abderrazak-hajji-45a2132bb/}{linkedin.com/in/abderrazak-hajji-45a2132bb}
+
+\fld{Key capability} Cybersecurity, threat analysis, fraud detection.
+
+\fld{Why him} My tests proved the system misses well-made forgeries. Deciding
+which fraud patterns to prioritise, and where a false positive costs more than a
+miss, requires someone who has seen real fraud.
+
+\fld{Role} Define fraud scenarios, calibrate severity and the false-positive
+threshold, challenge the detection rules adversarially.
+
+\fld{Potential} He thinks like an attacker, which is the only reliable way to
+test a detection tool. Someone whose instinct is to break the system is worth
+more here than another builder.
+\end{person}
+
+%% ------------------------------------------------------ 3
+\heading{3.}{Backend, cloud and MLOps}
+
+\begin{person}{Adama \ $\cdot$ \ Backend / Cloud / MLOps Engineer}
+\fld{Contact} +212 614 166 631 \ $\cdot$ \
+\href{https://www.linkedin.com/in/startlingadama/}{linkedin.com/in/startlingadama}
+
+\fld{Key capability} Backend engineering, DevOps, cloud infrastructure, AI systems.
+
+\fld{Why him} The prototype has no rate limiting, no persistence and a payload
+ceiling on its host. Each of these is a production problem, and each one blocks
+a first paying customer.
+
+\fld{Role} Build the API, the infrastructure and the deployment pipeline; make
+the system scale and stay within cost.
+
+\fld{Potential} He covers software, DevOps and AI at once --- a range that
+usually takes three people. On a small team, that breadth is the difference
+between shipping and stalling.
+\end{person}
+
+%% ------------------------------------------------------ clôture
+\vspace{6pt}
+\begin{note}{What this team would look like}
+Four people covering detection, product, adversarial testing and production,
+with me on the AI and detection side. Deliberately no second AI engineer: the
+prototype's failures were never a lack of modelling: they were a lack of
+usability, domain knowledge and operational rigour.
+\end{note}
+
+\end{document}
