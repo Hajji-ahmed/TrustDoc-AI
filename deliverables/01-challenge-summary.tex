@@ -2,187 +2,155 @@
 % SUM 72H Build Challenge — Deliverable 01
 % Compile: pdflatex 01-challenge-summary.tex
 
-\documentclass[10pt,a4paper]{article}
+\documentclass[11pt,a4paper]{article}
 
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
-\usepackage[margin=13mm,top=11mm,bottom=11mm]{geometry}
+\usepackage[margin=17mm,top=13mm,bottom=11mm]{geometry}
 \usepackage{helvet}
 \renewcommand{\familydefault}{\sfdefault}
 \usepackage{xcolor}
-\usepackage{titlesec}
 \usepackage{enumitem}
-\usepackage{multicol}
-\usepackage{array}
 \usepackage[hidelinks]{hyperref}
 
 \definecolor{navy}{HTML}{17365D}
-\definecolor{hairline}{HTML}{C9D2DE}
-\definecolor{muted}{HTML}{4A5568}
+\definecolor{hairline}{HTML}{D5DDE7}
+\definecolor{muted}{HTML}{5B6672}
 \definecolor{soft}{HTML}{EEF2F7}
 
 \pagestyle{empty}
 \setlength{\parindent}{0pt}
-\setlength{\parskip}{1.5pt}
-\setlength{\columnsep}{6mm}
-\linespread{1.0}
+\setlength{\parskip}{3pt}
 
-% \MakeUppercase doit occuper l'argument <before-code>, qui reçoit le titre.
-% Placé dans <format>, il absorbe aussi le filet défini en <after-code>.
-\titleformat{\section}
-  {\normalfont\bfseries\color{navy}\footnotesize}
-  {}{0pt}{\MakeUppercase}[\vspace{-5pt}\textcolor{hairline}{\rule{\linewidth}{0.4pt}}]
-\titlespacing*{\section}{0pt}{5pt}{2pt}
+\setlist[itemize]{leftmargin=11pt,itemsep=2pt,topsep=3pt,parsep=0pt,
+                  label=\textcolor{navy}{\footnotesize$\bullet$}}
 
 \newcommand{\lead}[1]{\textbf{\color{navy}#1}}
+\newcommand{\rulethin}{\textcolor{hairline}{\rule{\linewidth}{0.4pt}}}
+
+% Bloc à gouttière : libellé de section à gauche, contenu à droite.
+% Le tout reste une seule colonne de lecture.
+\newlength{\gutter}\setlength{\gutter}{30mm}
+\newenvironment{block}[1]{%
+  \par\vspace{5pt}\rulethin\par\vspace{5pt}\noindent
+  \begin{minipage}[t]{\gutter}%
+    \raggedright\scriptsize\bfseries\color{navy}\MakeUppercase{#1}%
+  \end{minipage}\hfill
+  \begin{minipage}[t]{\dimexpr\linewidth-\gutter-5mm}%
+    \setlength{\parskip}{3pt}%
+}{%
+  \end{minipage}\par
+}
 
 \begin{document}
 \small
 
 %% ---------------------------------------------------------------- header
-{\color{navy}\LARGE\bfseries DocShield AI}\\[2pt]
-{\large AI Document Authenticity Screening}\\[5pt]
-{\color{muted}\footnotesize
-SUM 72H Build Challenge \quad$\cdot$\quad Deliverable 01 --- Challenge Summary
-\quad$\cdot$\quad Ahmed Hajji \quad$\cdot$\quad Individual}\\[3pt]
+\noindent
+\begin{minipage}[b]{0.62\linewidth}
+  {\color{navy}\LARGE\bfseries DocShield AI}\\[2pt]
+  {\large\color{muted}AI Document Authenticity Screening}
+\end{minipage}\hfill
+\begin{minipage}[b]{0.36\linewidth}
+  \raggedleft\footnotesize\color{muted}
+  SUM 72H Build Challenge\\
+  Deliverable 01 --- Challenge Summary\\
+  Ahmed Hajji \quad$\cdot$\quad Individual
+\end{minipage}
+
+\vspace{5pt}
+\textcolor{navy}{\rule{\linewidth}{1.1pt}}
+\vspace{5pt}
+
+{\color{navy}\bfseries\large
+An AI-assisted screening tool that returns evidence a reviewer can act on ---
+not a verdict.}
+
+\vspace{4pt}
 {\footnotesize\color{muted}
 Live prototype: \href{https://trust-doc-ai.vercel.app}{trust-doc-ai.vercel.app}
 \quad$\cdot$\quad
 Source: \href{https://github.com/Hajji-ahmed/TrustDoc-AI}{github.com/Hajji-ahmed/TrustDoc-AI}}
 
-\vspace{4pt}
-\textcolor{navy}{\rule{\linewidth}{1pt}}
-\vspace{1pt}
-
-{\footnotesize\color{navy}\bfseries
-PROBLEM $\rightarrow$ SOLUTION $\rightarrow$ PROTOTYPE $\rightarrow$ VALIDATION $\rightarrow$ BUSINESS LOGIC}
-
-\vspace{2pt}
-
 %% ---------------------------------------------------------------- body
-% Sans \raggedcolumns, multicol étire les blancs de la colonne la plus courte
-% pour égaliser les hauteurs, ce qui disloque les listes à puces.
-\raggedcolumns
-\begin{multicols}{2}
 
-\section{1. Problem}
-Official documents are falsified in ways that are hard to catch by eye: edited
-text, replaced photos, forged stamps, copied signatures, altered QR codes, and
-increasingly, documents generated from scratch by AI.
+\begin{block}{Problem}
+Official documents are falsified through edited text, replaced photos, forged
+stamps, altered QR codes --- and now through AI generation.
 
-Manual verification is slow, repetitive and inconsistent. A reviewer checking
-dozens of files a day cannot reliably compare font rendering, recompute totals
-and validate identifiers on every page --- and the most damaging forgeries are
-precisely the subtle ones.
+Manual review is slow, repetitive, and misses precisely the subtle cases.
+\end{block}
 
-\section{2. Target Users}
-Organizations where document verification is repetitive, time-consuming and
-consequential: recruitment, finance, compliance and administrative teams.
-Initial focus is on teams that already verify documents by hand today and
-carry the cost of an undetected forgery.
+\begin{block}{Target users}
+Teams that verify documents at volume: recruitment, finance, compliance and
+administration.
+\end{block}
 
-\section{3. Initial Evidence}
-The fraud patterns above are technically observable and were used to shape the
-system. Two were tested directly against the working prototype:
-
-\begin{itemize}[leftmargin=11pt,itemsep=1pt,topsep=2pt]
-  \item An AI-generated invoice, visually flawless, was scored low risk ---
-        exposing a blind spot no visual model can close on its own.
-  \item A client tax identifier with an invalid digit count went unnoticed by
-        the model, because counting digits is exactly what vision models fail at.
+\begin{block}{Evidence}
+Three tests run against the working prototype:
+\begin{itemize}
+  \item AI-generated invoice, visually flawless $\rightarrow$ scored low risk.
+  \item Invalid tax identifier length $\rightarrow$ missed by the model.
+  \item Low score returned with a reject verdict $\rightarrow$ contradictory output.
 \end{itemize}
+Each finding changed the build. Interviews are under way to rank use cases.
+\end{block}
 
-Both findings changed the product (see \S6). User and stakeholder interviews
-are being conducted to validate current verification workflows and rank the
-use cases by value.
-
-\section{4. Solution}
-An AI-assisted screening system that returns not a verdict, but \emph{evidence
-a human can act on}.
-
-\vspace{2pt}
+\begin{block}{Solution}
 {\footnotesize\color{navy}\bfseries
 Upload $\rightarrow$ Normalization $\rightarrow$ Multimodal analysis
-$\rightarrow$ Deterministic checks $\rightarrow$ Risk score
-$\rightarrow$ Explainable report}
-\vspace{2pt}
+$\rightarrow$ Deterministic checks $\rightarrow$ Risk score $\rightarrow$ \mbox{Report}}
 
-The key design decision is the division of labour. A vision model is used for
-what it does well --- reading a document and spotting visual manipulation. It
-is not trusted for what it does badly. Counting digits, verifying a checksum
-and re-adding a column are handled by deterministic code, whose output is
-exact and auditable.
+A division of labour. The model reads the document and spots visual
+manipulation. Code counts digits, verifies checksums and re-adds columns ---
+exactly what models fail at. Every flag is drawn and numbered on the document,
+so the reviewer sees \emph{where} to look.
+\end{block}
 
-Every flagged region is drawn and numbered on the document itself, so the
-reviewer sees \emph{where} to look, not only \emph{that} something is wrong.
-
-\columnbreak
-\section{5. Prototype (built)}
-A working, deployed web application. What runs today:
-
-\begin{itemize}[leftmargin=11pt,itemsep=1pt,topsep=2pt]
-  \item PDF, JPG and PNG upload; the browser renders the document to a single
-        image used both as the preview and as the model payload, which
-        guarantees that flagged regions align with what the reviewer sees.
-  \item Multimodal analysis returning a strict JSON schema, re-validated
-        server-side --- a malformed analysis is rejected, never half-displayed.
-  \item Deterministic checks independent of the model: tax identifier length,
-        VAT arithmetic (\textit{HT} $+$ \textit{VAT} $=$ \textit{TTC}), date
-        coherence, IBAN mod-97 checksum.
-        A failed check raises the score and blocks an ``accept'' verdict.
-  \item Output: risk score (0--100), risk level, extracted fields with reading
-        confidence, anomalies with severity and category, numbered regions
-        overlaid on the document, explanation and recommended action.
-  \item Demo mode without an API key, so the interface is always demonstrable.
+\begin{block}{Prototype --- live}
+\begin{itemize}
+  \item PDF, JPG, PNG. Preview and model input are the same image, so flagged
+        regions always align.
+  \item Strict JSON schema, re-validated server-side.
+  \item Deterministic checks: identifier length, VAT arithmetic, date
+        coherence, IBAN mod-97.
+  \item Output: risk score, flagged regions, extracted fields, explanation,
+        recommended action.
+  \item Demo mode without an API key.
 \end{itemize}
+{\footnotesize\color{muted}
+Target architecture, out of 72h scope: OCR tuning, dedicated manipulation
+models, metadata forensics, cross-document checks.}
+\end{block}
 
-Deliberately out of scope for 72 hours: OCR-specific tuning, dedicated
-manipulation-detection models, metadata forensics and multi-document
-cross-checking. These form the target architecture, not the MVP.
+\begin{block}{Validation}
+Focus: how documents are verified today, which frauds are hardest to catch,
+and what evidence earns a reviewer's trust. A learning log records who was
+contacted, what was learned, what was surprising, and what changed as a result.
+\end{block}
 
-\section{6. Validation}
-Testing focuses on how documents are verified today, which fraud types are
-hardest to catch, how long verification takes, and what evidence a reviewer
-needs to trust an automated result.
-
-Two prototype tests already changed the build: the AI-generated invoice led to
-the deterministic-check layer, and a contradictory output (low score, reject
-verdict) led to a consolidation step that keeps score, level and
-recommendation coherent. A learning log documents who was contacted, what was
-learned, what was surprising and what changed as a result.
-
-\section{7. Business Logic}
-\lead{Customer.} Organizations that verify official documents at volume ---
-lenders, insurers, recruiters, schools, administrations.
-
-\lead{Value.} Less manual screening, faster identification of suspicious
-files, and traceable evidence a reviewer can defend.
-
-\lead{Model.} B2B SaaS per seat or per document, plus an API for integration
-into existing case-management systems. Pricing to be validated.
-
-\lead{Market.} Starts with teams having recurring verification needs; expands
-across finance, recruitment, insurance, education and public administration.
-
-\lead{Next 30 days.} Interview and pilot with one organization, add metadata
-forensics and cross-document consistency, extend deterministic checks, produce
-a timestamped audit report, and test pricing.
-
-\end{multicols}
+\begin{block}{Business logic}
+\lead{Customer} \ Organizations verifying documents at volume --- lenders,
+insurers, recruiters, schools, administrations.\\
+\lead{Value} \ Less manual screening, faster triage, traceable evidence.\\
+\lead{Model} \ B2B SaaS per seat or per document, plus an integration API.\\
+\lead{Market} \ Finance, recruitment, insurance, education, public sector.\\
+\lead{Next 30 days} \ Pilot with one organization, add metadata forensics and
+cross-document consistency, test pricing.
+\end{block}
 
 %% ---------------------------------------------------------------- footer
-\vspace{-4pt}
+\vspace{9pt}
 \colorbox{soft}{%
 \begin{minipage}{\dimexpr\linewidth-2\fboxsep}
-\vspace{2pt}
-{\footnotesize\color{navy}\bfseries KEY ASSUMPTION}\\[2pt]
-{\footnotesize
-Organizations will adopt AI-assisted screening only if it reduces verification
-effort \emph{and} shows transparent evidence for every flag. A score without
-justification will not be trusted --- and should not be. The product is
-therefore built around explainability, and states plainly that it is a
-decision aid, not an expert opinion.}
-\vspace{3pt}
+\vspace{4pt}
+\hspace{2pt}\begin{minipage}{\dimexpr\linewidth-6pt}
+{\scriptsize\color{navy}\bfseries KEY ASSUMPTION}\\[3pt]
+Organizations will adopt AI-assisted screening only if it shows transparent
+evidence for every flag. A score without justification will not be trusted ---
+and should not be.
+\end{minipage}
+\vspace{5pt}
 \end{minipage}}
 
 \end{document}
