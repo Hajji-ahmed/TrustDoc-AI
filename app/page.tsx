@@ -24,11 +24,13 @@ export default function DashboardPage() {
   const [result, setResult] = useState<AnalysisResult | null>(null)
   const [mode, setMode] = useState<AnalysisMode | null>(null)
   const [errorMessage, setErrorMessage] = useState<string>('')
+  const [activeElementId, setActiveElementId] = useState<string | null>(null)
 
   function handlePrepared(doc: PreparedDocument) {
     setPreparedDocument(doc)
     setResult(null)
     setErrorMessage('')
+    setActiveElementId(null)
     setStatus('filePrepared')
   }
 
@@ -36,6 +38,7 @@ export default function DashboardPage() {
     if (!preparedDocument) return
     setStatus('analyzing')
     setErrorMessage('')
+    setActiveElementId(null)
 
     try {
       const response = await fetch('/api/analyze', {
@@ -93,7 +96,15 @@ export default function DashboardPage() {
               <CardHeader title="Document à contrôler" />
               <div className="space-y-4 p-5">
                 <UploadZone onPrepared={handlePrepared} disabled={status === 'analyzing'} />
-                {preparedDocument ? <DocumentPreview document={preparedDocument} /> : null}
+                {preparedDocument ? (
+                  <DocumentPreview
+                    document={preparedDocument}
+                    regions={result?.suspiciousRegions ?? []}
+                    elements={result?.suspiciousElements ?? []}
+                    activeElementId={activeElementId}
+                    onHoverElement={setActiveElementId}
+                  />
+                ) : null}
                 <Button
                   onClick={() => void runAnalysis()}
                   disabled={!preparedDocument || status === 'analyzing'}
@@ -125,7 +136,12 @@ export default function DashboardPage() {
                 <RecommendationBanner recommendation={result.recommendation} />
                 <div className="grid gap-6 xl:grid-cols-2">
                   <ExtractedFields fields={result.extractedInformation} />
-                  <SuspiciousElements elements={result.suspiciousElements} />
+                  <SuspiciousElements
+                    elements={result.suspiciousElements}
+                    regions={result.suspiciousRegions}
+                    activeElementId={activeElementId}
+                    onHoverElement={setActiveElementId}
+                  />
                 </div>
                 <AnalysisExplanation explanation={result.explanation} />
               </div>
