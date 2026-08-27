@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { analysisResultSchema } from '@/lib/schema'
 import { buildMockAnalysis } from '@/lib/mock'
 import { analyzeDocument, ModelOutputError } from '@/lib/openai'
+import { consolidateAnalysis } from '@/lib/validators'
 import type { AnalyzeError, AnalyzeErrorCode, AnalyzeResponse } from '@/lib/types'
 
 export const runtime = 'nodejs'
@@ -40,13 +41,13 @@ export async function POST(request: Request) {
       console.error('[analyze] jeu de démonstration invalide', parsed.error.issues)
       return errorResponse('INVALID_MODEL_OUTPUT', 'Le jeu de démonstration est invalide.', 500)
     }
-    const body: AnalyzeResponse = { mode: 'demo', result: parsed.data }
+    const body: AnalyzeResponse = { mode: 'demo', result: consolidateAnalysis(parsed.data) }
     return NextResponse.json(body)
   }
 
   try {
     const result = await analyzeDocument(imageDataUrl, apiKey)
-    const body: AnalyzeResponse = { mode: 'live', result }
+    const body: AnalyzeResponse = { mode: 'live', result: consolidateAnalysis(result) }
     return NextResponse.json(body)
   } catch (cause) {
     if (cause instanceof ModelOutputError) {
