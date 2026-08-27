@@ -6,9 +6,7 @@ export function Card({
   className?: string
 }) {
   return (
-    <div
-      className={`rounded-lg border border-[var(--color-line)] bg-[var(--color-surface)] ${className}`}
-    >
+    <div className={`rounded-xl bg-[var(--color-surface)] shadow-card ${className}`}>
       {children}
     </div>
   )

@@ -45,7 +45,7 @@ export function UploadZone({
           setDragging(false)
           void handleFile(event.dataTransfer.files[0])
         }}
-        className={`rounded-lg border border-dashed px-6 py-10 text-center ${
+        className={`rounded-xl border border-dashed px-6 py-10 text-center ${
           dragging
             ? 'border-[var(--color-ink)] bg-[var(--color-canvas)]'
             : 'border-[var(--color-line)] bg-[var(--color-surface)]'
@@ -78,7 +78,7 @@ export function UploadZone({
       {error ? (
         <p
           role="alert"
-          className="mt-3 rounded-md border border-[var(--color-risk-high)] bg-[var(--color-risk-high-soft)] px-3 py-2 text-xs text-[var(--color-risk-high)]"
+          className="mt-3 rounded-lg border border-[var(--color-risk-high)] bg-[var(--color-risk-high-soft)] px-3 py-2 text-xs text-[var(--color-risk-high)]"
         >
           {error}
         </p>

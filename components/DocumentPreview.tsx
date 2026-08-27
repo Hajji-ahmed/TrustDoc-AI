@@ -24,7 +24,7 @@ export function DocumentPreview({
 
   return (
     <div>
-      <div className="relative overflow-hidden rounded-md border border-[var(--color-line)] bg-[var(--color-canvas)]">
+      <div className="relative overflow-hidden rounded-lg border border-[var(--color-line)] bg-[var(--color-canvas)]">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={document.dataUrl}

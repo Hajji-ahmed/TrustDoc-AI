@@ -72,20 +72,25 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen">
-      <header className="border-b border-[var(--color-line)] bg-[var(--color-surface)]">
+      <header className="bg-[var(--color-brand)]">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-7 w-7 items-center justify-center rounded bg-[var(--color-ink)] text-xs font-bold text-white">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/10 text-xs font-bold text-white">
               DS
             </div>
             <div>
-              <p className="text-sm font-semibold leading-tight">DocShield AI</p>
-              <p className="text-xs leading-tight text-[var(--color-ink-muted)]">
+              <p className="text-sm font-semibold leading-tight text-white">DocShield AI</p>
+              <p className="text-xs leading-tight text-white/70">
                 Contrôle d&apos;authenticité documentaire
               </p>
             </div>
           </div>
-          {mode === 'demo' ? <Badge level="neutral">Mode démonstration</Badge> : null}
+          {mode === 'demo' ? (
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-white/10 px-2.5 py-0.5 text-xs font-medium text-white">
+              <span className="h-1.5 w-1.5 rounded-full bg-white/70" aria-hidden="true" />
+              Mode démonstration
+            </span>
+          ) : null}
         </div>
       </header>
 

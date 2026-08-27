@@ -18,7 +18,7 @@ const ACTION_STYLES: Record<Recommendation['action'], string> = {
 
 export function RecommendationBanner({ recommendation }: { recommendation: Recommendation }) {
   return (
-    <div className={`rounded-lg border p-5 ${ACTION_STYLES[recommendation.action]}`}>
+    <div className={`rounded-xl border p-5 ${ACTION_STYLES[recommendation.action]}`}>
       <p className="text-xs uppercase tracking-wide opacity-80">Recommandation</p>
       <p className="mt-1 text-sm font-semibold">{ACTION_LABELS[recommendation.action]}</p>
       <p className="mt-2 text-sm text-[var(--color-ink)]">{recommendation.summary}</p>

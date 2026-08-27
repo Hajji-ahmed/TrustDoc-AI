@@ -11,7 +11,7 @@ export function RiskScoreCard({
   level: RiskLevel
   documentType: string
 }) {
-  const radius = 42
+  const radius = 40
   const circumference = 2 * Math.PI * radius
   const clamped = Math.min(100, Math.max(0, score))
   const offset = circumference - (clamped / 100) * circumference
@@ -25,8 +25,8 @@ export function RiskScoreCard({
             cy="50"
             r={radius}
             fill="none"
-            stroke="var(--color-line)"
-            strokeWidth="8"
+            stroke="var(--color-brand-soft)"
+            strokeWidth="13"
           />
           <circle
             cx="50"
@@ -34,7 +34,7 @@ export function RiskScoreCard({
             r={radius}
             fill="none"
             stroke={RISK_STYLES[level].stroke}
-            strokeWidth="8"
+            strokeWidth="13"
             strokeDasharray={circumference}
             strokeDashoffset={offset}
             strokeLinecap="round"
