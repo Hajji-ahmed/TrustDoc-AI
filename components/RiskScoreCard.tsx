@@ -41,7 +41,7 @@ export function RiskScoreCard({
           />
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="text-2xl font-semibold tabular-nums">{clamped}</span>
+          <span className="font-display text-3xl tabular-nums">{clamped}</span>
           <span className="text-[10px] uppercase tracking-wide text-[var(--color-ink-muted)]">
             sur 100
           </span>

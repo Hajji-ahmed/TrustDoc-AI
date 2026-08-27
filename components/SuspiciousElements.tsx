@@ -27,9 +27,9 @@ export function SuspiciousElements({
   const numbers = regionNumbers(regions, elements)
 
   return (
-    <Card accent="slate">
+    <Card accent="clay">
       <CardHeader
-        accent="slate"
+        accent="clay"
         title="Éléments suspects"
         subtitle={`${elements.length} anomalie${elements.length > 1 ? 's' : ''} détectée${
           elements.length > 1 ? 's' : ''

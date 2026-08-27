@@ -1,27 +1,21 @@
-// Accents d'identité des panneaux. Volontairement limités à des tons froids :
-// le vert, l'ambre et le rouge restent réservés à la signalétique de risque,
-// pour qu'une couleur de panneau ne puisse jamais être lue comme un verdict.
-export type CardAccent = 'navy' | 'teal' | 'indigo' | 'slate'
+// Accents d'identité des panneaux, dans la gamme du système. Aucun n'emprunte
+// au vert / ocre / brique de la signalétique de risque, ni au terracotta des
+// actions : un panneau ne peut donc être lu ni comme un verdict ni comme un
+// bouton.
+export type CardAccent = 'forest' | 'olive' | 'sand' | 'clay'
 
 const ACCENT_BAR: Record<CardAccent, string> = {
-  navy: 'bg-[var(--color-brand)]',
-  teal: 'bg-[var(--color-accent-teal)]',
-  indigo: 'bg-[var(--color-accent-indigo)]',
-  slate: 'bg-[var(--color-accent-slate)]',
-}
-
-const ACCENT_DOT: Record<CardAccent, string> = {
-  navy: 'bg-[var(--color-brand)]',
-  teal: 'bg-[var(--color-accent-teal)]',
-  indigo: 'bg-[var(--color-accent-indigo)]',
-  slate: 'bg-[var(--color-accent-slate)]',
+  forest: 'bg-[var(--color-forest)]',
+  olive: 'bg-[var(--color-olive)]',
+  sand: 'bg-[#c0b6a5]',
+  clay: 'bg-[#a19786]',
 }
 
 const ACCENT_TINT: Record<CardAccent, string> = {
-  navy: 'bg-[var(--color-brand-soft)]',
-  teal: 'bg-[var(--color-accent-teal-soft)]',
-  indigo: 'bg-[var(--color-accent-indigo-soft)]',
-  slate: 'bg-[var(--color-accent-slate-soft)]',
+  forest: 'bg-[#eef0e9]',
+  olive: 'bg-[var(--color-olive-soft)]',
+  sand: 'bg-[#f4efe6]',
+  clay: 'bg-[#f2ede4]',
 }
 
 export function Card({
@@ -35,9 +29,9 @@ export function Card({
 }) {
   return (
     <div
-      className={`overflow-hidden rounded-xl bg-[var(--color-surface)] shadow-card ${className}`}
+      className={`overflow-hidden rounded-[var(--radius-panel)] bg-[var(--color-surface)] shadow-card ${className}`}
     >
-      {accent ? <div className={`h-1 ${ACCENT_BAR[accent]}`} aria-hidden="true" /> : null}
+      {accent ? <div className={`h-1.5 ${ACCENT_BAR[accent]}`} aria-hidden="true" /> : null}
       {children}
     </div>
   )
@@ -61,7 +55,7 @@ export function CardHeader({
       <div className="flex items-center gap-2">
         {accent ? (
           <span
-            className={`h-2 w-2 shrink-0 rounded-full ${ACCENT_DOT[accent]}`}
+            className={`h-2 w-2 shrink-0 rounded-full ${ACCENT_BAR[accent]}`}
             aria-hidden="true"
           />
         ) : null}

@@ -9,9 +9,9 @@ function confidenceLabel(confidence: number) {
 
 export function ExtractedFields({ fields }: { fields: ExtractedField[] }) {
   return (
-    <Card accent="indigo">
+    <Card accent="olive">
       <CardHeader
-        accent="indigo"
+        accent="olive"
         title="Informations extraites"
         subtitle={`${fields.length} champ${fields.length > 1 ? 's' : ''} identifié${
           fields.length > 1 ? 's' : ''

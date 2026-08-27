@@ -2,8 +2,9 @@
 
 import { useState } from 'react'
 import { Card, CardHeader } from '@/components/ui/Card'
-import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
+import { Sidebar } from '@/components/Sidebar'
+import { SessionStats, EMPTY_SESSION, type SessionCounts } from '@/components/SessionStats'
 import { EmptyState } from '@/components/states/EmptyState'
 import { LoadingState } from '@/components/states/LoadingState'
 import { ErrorState } from '@/components/states/ErrorState'
@@ -25,6 +26,7 @@ export default function DashboardPage() {
   const [mode, setMode] = useState<AnalysisMode | null>(null)
   const [errorMessage, setErrorMessage] = useState<string>('')
   const [activeElementId, setActiveElementId] = useState<string | null>(null)
+  const [session, setSession] = useState<SessionCounts>(EMPTY_SESSION)
 
   function handlePrepared(doc: PreparedDocument) {
     setPreparedDocument(doc)
@@ -59,6 +61,11 @@ export default function DashboardPage() {
         return
       }
 
+      const level = payload.result.riskLevel
+      setSession((previous) => ({
+        total: previous.total + 1,
+        byLevel: { ...previous.byLevel, [level]: previous.byLevel[level] + 1 },
+      }))
       setResult(payload.result)
       setMode(payload.mode)
       setStatus('success')
@@ -70,96 +77,109 @@ export default function DashboardPage() {
     }
   }
 
+  const demoBadge =
+    mode === 'demo' ? (
+      <span className="inline-flex shrink-0 items-center gap-2 rounded-full border border-[var(--color-brand)] bg-[var(--color-brand-soft)] px-3.5 py-1.5 text-xs font-semibold text-[#8c491a]">
+        <span className="h-1.5 w-1.5 rounded-full bg-[var(--color-brand)]" aria-hidden="true" />
+        Mode démonstration
+      </span>
+    ) : null
+
   return (
-    <div className="min-h-screen">
-      <header className="bg-[var(--color-brand)]">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-          <div className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/10 text-xs font-bold text-white">
-              DS
-            </div>
-            <div>
-              <p className="text-sm font-semibold leading-tight text-white">DocShield AI</p>
-              <p className="text-xs leading-tight text-white/70">
-                Contrôle d&apos;authenticité documentaire
-              </p>
-            </div>
+    <div className="flex min-h-screen">
+      <Sidebar />
+
+      <div className="min-w-0 flex-1">
+        {/* La barre latérale est masquée sous 1024 px : la marque revient donc
+            dans l'en-tête pour que l'application reste identifiable. */}
+        <div className="flex items-center gap-3 px-5 pt-5 lg:hidden">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--color-brand)] text-sm font-bold text-[#f9f4ed]">
+            D
           </div>
-          {mode === 'demo' ? (
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-white/10 px-2.5 py-0.5 text-xs font-medium text-white">
-              <span className="h-1.5 w-1.5 rounded-full bg-white/70" aria-hidden="true" />
-              Mode démonstration
-            </span>
-          ) : null}
+          <p className="font-display text-lg leading-none">DocShield AI</p>
         </div>
-      </header>
 
-      <main className="mx-auto w-full max-w-7xl px-6 py-8">
-        {/* Trois paliers : une colonne sous 768 px, résultats sur deux colonnes
-            entre 768 et 1280, et document/résultats côte à côte au-delà. */}
-        <div className="grid gap-6 xl:grid-cols-5">
-          <section className="xl:col-span-2">
-            <Card accent="teal">
-              <CardHeader accent="teal" title="Document à contrôler" />
-              <div className="space-y-4 p-5">
-                <UploadZone onPrepared={handlePrepared} disabled={status === 'analyzing'} />
-                {preparedDocument ? (
-                  <DocumentPreview
-                    document={preparedDocument}
-                    regions={result?.suspiciousRegions ?? []}
-                    elements={result?.suspiciousElements ?? []}
-                    activeElementId={activeElementId}
-                    onHoverElement={setActiveElementId}
-                  />
-                ) : null}
-                <Button
-                  onClick={() => void runAnalysis()}
-                  disabled={!preparedDocument || status === 'analyzing'}
-                >
-                  {status === 'analyzing' ? 'Analyse en cours…' : 'Analyser le document'}
-                </Button>
-              </div>
-            </Card>
-          </section>
+        <header className="flex flex-wrap items-start justify-between gap-4 px-5 py-6 sm:px-7">
+          <div className="min-w-0">
+            <h1 className="font-display text-2xl leading-tight sm:text-3xl">
+              Analyse de document
+            </h1>
+            <p className="mt-1 text-sm text-[var(--color-ink-muted)]">
+              Pré-contrôle d&apos;authenticité — score, anomalies localisées, recommandation.
+            </p>
+          </div>
+          {demoBadge}
+        </header>
 
-          <section className="xl:col-span-3">
-            {status === 'analyzing' ? (
-              <Card>
-                <LoadingState />
-              </Card>
-            ) : status === 'error' ? (
-              <Card>
-                <ErrorState message={errorMessage} onRetry={() => void runAnalysis()} />
-              </Card>
-            ) : status === 'success' && result ? (
-              <div className="space-y-6">
-                <Card accent="navy">
-                  <RiskScoreCard
-                    score={result.riskScore}
-                    level={result.riskLevel}
-                    documentType={result.detectedDocumentType}
-                  />
-                </Card>
-                <RecommendationBanner recommendation={result.recommendation} />
-                <div className="grid gap-6 md:grid-cols-2">
-                  <ExtractedFields fields={result.extractedInformation} />
-                  <SuspiciousElements
-                    elements={result.suspiciousElements}
-                    regions={result.suspiciousRegions}
-                    activeElementId={activeElementId}
-                    onHoverElement={setActiveElementId}
-                  />
+        <main className="space-y-6 px-5 pb-10 sm:px-7">
+          <SessionStats counts={session} />
+
+          {/* Trois paliers : une colonne sous 768 px, résultats sur deux colonnes
+              entre 768 et 1280, document et résultats côte à côte au-delà. */}
+          <div className="grid gap-6 xl:grid-cols-5">
+            <section className="xl:col-span-2">
+              <Card accent="sand">
+                <CardHeader accent="sand" title="Document à contrôler" />
+                <div className="space-y-4 p-5">
+                  <UploadZone onPrepared={handlePrepared} disabled={status === 'analyzing'} />
+                  {preparedDocument ? (
+                    <DocumentPreview
+                      document={preparedDocument}
+                      regions={result?.suspiciousRegions ?? []}
+                      elements={result?.suspiciousElements ?? []}
+                      activeElementId={activeElementId}
+                      onHoverElement={setActiveElementId}
+                    />
+                  ) : null}
+                  <Button
+                    onClick={() => void runAnalysis()}
+                    disabled={!preparedDocument || status === 'analyzing'}
+                  >
+                    {status === 'analyzing' ? 'Analyse en cours…' : 'Analyser le document'}
+                  </Button>
                 </div>
-                <AnalysisExplanation explanation={result.explanation} />
-              </div>
-            ) : (
-              <Card>
-                <EmptyState />
               </Card>
-            )}
-          </section>
-        </div>
-      </main>
+            </section>
+
+            <section className="xl:col-span-3">
+              {status === 'analyzing' ? (
+                <Card>
+                  <LoadingState />
+                </Card>
+              ) : status === 'error' ? (
+                <Card>
+                  <ErrorState message={errorMessage} onRetry={() => void runAnalysis()} />
+                </Card>
+              ) : status === 'success' && result ? (
+                <div className="space-y-6">
+                  <Card accent="forest">
+                    <RiskScoreCard
+                      score={result.riskScore}
+                      level={result.riskLevel}
+                      documentType={result.detectedDocumentType}
+                    />
+                  </Card>
+                  <RecommendationBanner recommendation={result.recommendation} />
+                  <div className="grid gap-6 md:grid-cols-2">
+                    <ExtractedFields fields={result.extractedInformation} />
+                    <SuspiciousElements
+                      elements={result.suspiciousElements}
+                      regions={result.suspiciousRegions}
+                      activeElementId={activeElementId}
+                      onHoverElement={setActiveElementId}
+                    />
+                  </div>
+                  <AnalysisExplanation explanation={result.explanation} />
+                </div>
+              ) : (
+                <Card>
+                  <EmptyState />
+                </Card>
+              )}
+            </section>
+          </div>
+        </main>
+      </div>
     </div>
   )
 }

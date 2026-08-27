@@ -18,7 +18,7 @@ const ACTION_STYLES: Record<Recommendation['action'], string> = {
 
 export function RecommendationBanner({ recommendation }: { recommendation: Recommendation }) {
   return (
-    <div className={`rounded-xl border p-5 ${ACTION_STYLES[recommendation.action]}`}>
+    <div className={`rounded-[var(--radius-panel)] border p-5 ${ACTION_STYLES[recommendation.action]}`}>
       <p className="text-xs uppercase tracking-wide opacity-80">Recommandation</p>
       <p className="mt-1 text-sm font-semibold">{ACTION_LABELS[recommendation.action]}</p>
       <p className="mt-2 text-sm text-[var(--color-ink)]">{recommendation.summary}</p>
@@ -38,8 +38,8 @@ export function RecommendationBanner({ recommendation }: { recommendation: Recom
 
 export function AnalysisExplanation({ explanation }: { explanation: string }) {
   return (
-    <Card accent="navy">
-      <CardHeader accent="navy" title="Analyse détaillée" />
+    <Card accent="forest">
+      <CardHeader accent="forest" title="Analyse détaillée" />
       <div className="space-y-3 px-5 py-4">
         <p className="whitespace-pre-line text-sm leading-relaxed text-[var(--color-ink-muted)]">
           {explanation}

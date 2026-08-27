@@ -1,40 +1,59 @@
+@import url('https://fonts.googleapis.com/css2?family=Caprasimo&family=Figtree:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --color-surface: #ffffff;
-  --color-canvas: #eef1f6;
-  --color-line: #e2e8f0;
-  --color-ink: #16202e;
-  --color-ink-muted: #5b6a7d;
+  /* Système « Organic » — fond crème, surfaces claires, accent terracotta. */
+  --color-canvas: #f5ead8;
+  --color-surface: #f9f4ed;
+  --color-surface-warm: #ebddc5;
+  --color-line: #ddd4c5;
+  --color-ink: #201e1d;
+  --color-ink-muted: #82796a;
 
-  /* Couleur de marque. Structurelle uniquement — en-tête, action principale,
-     piste de la jauge. Ne porte jamais d'information de risque. */
-  --color-brand: #17365d;
-  --color-brand-hover: #0f2440;
-  --color-brand-soft: #e6edf6;
+  /* Terracotta : actions et navigation active. Jamais sur un panneau, pour
+     qu'il ne puisse pas être confondu avec un niveau de risque. */
+  --color-brand: #c67139;
+  --color-brand-hover: #b2622d;
+  --color-brand-soft: #fff2eb;
+  --color-brand-tint: #ffe1d0;
 
-  /* Accents d'identité des panneaux. Tons froids uniquement : aucun ne doit
-     pouvoir être confondu avec la signalétique de risque ci-dessous. */
-  --color-accent-teal: #0e7490;
-  --color-accent-teal-soft: #edfafd;
-  --color-accent-indigo: #4338ca;
-  --color-accent-indigo-soft: #eff0fc;
-  --color-accent-slate: #475569;
-  --color-accent-slate-soft: #f1f4f8;
+  /* Olive : barre latérale et accents secondaires. */
+  --color-forest: #272e1b;
+  --color-forest-soft: #3d472b;
+  --color-olive: #7a8a5e;
+  --color-olive-soft: #f0fae1;
+  --color-olive-tint: #e1eecc;
 
-  /* Signalétique de risque. Réservée à cet usage, jamais décorative. */
-  --color-risk-low: #15803d;
-  --color-risk-low-soft: #eaf6ee;
-  --color-risk-medium: #b45309;
-  --color-risk-medium-soft: #fdf3e3;
-  --color-risk-high: #b91c1c;
-  --color-risk-high-soft: #fdeceb;
+  /* Signalétique de risque, retenue dans la gamme chaude du système mais
+     tenue à distance du terracotta d'action. Réservée au risque. */
+  --color-risk-low: #4f6b3a;
+  --color-risk-low-soft: #f0fae1;
+  --color-risk-medium: #8c6d16;
+  --color-risk-medium-soft: #fbf1d8;
+  --color-risk-high: #93211d;
+  --color-risk-high-soft: #fdeae7;
 
-  --shadow-card: 0 1px 2px rgba(16, 32, 56, 0.04), 0 8px 24px -12px rgba(16, 32, 56, 0.18);
+  --font-heading: 'Caprasimo', Georgia, serif;
+  --font-body: 'Figtree', system-ui, -apple-system, sans-serif;
+
+  --radius-panel: 26px;
+
+  --shadow-card: 0 1px 2px rgba(46, 43, 37, 0.08), 0 4px 14px rgba(46, 43, 37, 0.07);
+  --shadow-float: 0 12px 32px rgba(46, 43, 37, 0.16);
 }
 
 html,
 body {
   background-color: var(--color-canvas);
   color: var(--color-ink);
+  font-family: var(--font-body);
+}
+
+/* Caprasimo est une police d'affichage : réservée à la marque, aux grands
+   nombres et au titre de page. Les titres de cartes restent en Figtree, plus
+   lisible à petite taille dans un tableau de bord dense. */
+.font-display {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  letter-spacing: -0.01em;
 }
