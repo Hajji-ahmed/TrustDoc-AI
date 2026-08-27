@@ -9,6 +9,10 @@ import { LoadingState } from '@/components/states/LoadingState'
 import { ErrorState } from '@/components/states/ErrorState'
 import { UploadZone } from '@/components/UploadZone'
 import { DocumentPreview } from '@/components/DocumentPreview'
+import { RiskScoreCard } from '@/components/RiskScoreCard'
+import { ExtractedFields } from '@/components/ExtractedFields'
+import { SuspiciousElements } from '@/components/SuspiciousElements'
+import { RecommendationBanner, AnalysisExplanation } from '@/components/AnalysisReport'
 import type { PreparedDocument } from '@/lib/pdf'
 import type { AnalysisMode, AnalysisResult, AnalyzeError, AnalyzeResponse } from '@/lib/types'
 
@@ -101,19 +105,35 @@ export default function DashboardPage() {
           </section>
 
           <section className="lg:col-span-3">
-            <Card>
-              {status === 'analyzing' ? (
+            {status === 'analyzing' ? (
+              <Card>
                 <LoadingState />
-              ) : status === 'error' ? (
+              </Card>
+            ) : status === 'error' ? (
+              <Card>
                 <ErrorState message={errorMessage} onRetry={() => void runAnalysis()} />
-              ) : status === 'success' && result ? (
-                <pre className="overflow-x-auto p-5 text-xs">
-                  {JSON.stringify(result, null, 2)}
-                </pre>
-              ) : (
+              </Card>
+            ) : status === 'success' && result ? (
+              <div className="space-y-6">
+                <Card>
+                  <RiskScoreCard
+                    score={result.riskScore}
+                    level={result.riskLevel}
+                    documentType={result.detectedDocumentType}
+                  />
+                </Card>
+                <RecommendationBanner recommendation={result.recommendation} />
+                <div className="grid gap-6 xl:grid-cols-2">
+                  <ExtractedFields fields={result.extractedInformation} />
+                  <SuspiciousElements elements={result.suspiciousElements} />
+                </div>
+                <AnalysisExplanation explanation={result.explanation} />
+              </div>
+            ) : (
+              <Card>
                 <EmptyState />
-              )}
-            </Card>
+              </Card>
+            )}
           </section>
         </div>
       </main>
