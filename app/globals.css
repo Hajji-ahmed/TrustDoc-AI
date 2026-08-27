@@ -13,6 +13,15 @@
   --color-brand-hover: #0f2440;
   --color-brand-soft: #e6edf6;
 
+  /* Accents d'identité des panneaux. Tons froids uniquement : aucun ne doit
+     pouvoir être confondu avec la signalétique de risque ci-dessous. */
+  --color-accent-teal: #0e7490;
+  --color-accent-teal-soft: #edfafd;
+  --color-accent-indigo: #4338ca;
+  --color-accent-indigo-soft: #eff0fc;
+  --color-accent-slate: #475569;
+  --color-accent-slate-soft: #f1f4f8;
+
   /* Signalétique de risque. Réservée à cet usage, jamais décorative. */
   --color-risk-low: #15803d;
   --color-risk-low-soft: #eaf6ee;

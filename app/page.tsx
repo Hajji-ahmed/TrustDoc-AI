@@ -95,10 +95,12 @@ export default function DashboardPage() {
       </header>
 
       <main className="mx-auto w-full max-w-7xl px-6 py-8">
-        <div className="grid gap-6 lg:grid-cols-5">
-          <section className="lg:col-span-2">
-            <Card>
-              <CardHeader title="Document à contrôler" />
+        {/* Trois paliers : une colonne sous 768 px, résultats sur deux colonnes
+            entre 768 et 1280, et document/résultats côte à côte au-delà. */}
+        <div className="grid gap-6 xl:grid-cols-5">
+          <section className="xl:col-span-2">
+            <Card accent="teal">
+              <CardHeader accent="teal" title="Document à contrôler" />
               <div className="space-y-4 p-5">
                 <UploadZone onPrepared={handlePrepared} disabled={status === 'analyzing'} />
                 {preparedDocument ? (
@@ -120,7 +122,7 @@ export default function DashboardPage() {
             </Card>
           </section>
 
-          <section className="lg:col-span-3">
+          <section className="xl:col-span-3">
             {status === 'analyzing' ? (
               <Card>
                 <LoadingState />
@@ -131,7 +133,7 @@ export default function DashboardPage() {
               </Card>
             ) : status === 'success' && result ? (
               <div className="space-y-6">
-                <Card>
+                <Card accent="navy">
                   <RiskScoreCard
                     score={result.riskScore}
                     level={result.riskLevel}
@@ -139,7 +141,7 @@ export default function DashboardPage() {
                   />
                 </Card>
                 <RecommendationBanner recommendation={result.recommendation} />
-                <div className="grid gap-6 xl:grid-cols-2">
+                <div className="grid gap-6 md:grid-cols-2">
                   <ExtractedFields fields={result.extractedInformation} />
                   <SuspiciousElements
                     elements={result.suspiciousElements}

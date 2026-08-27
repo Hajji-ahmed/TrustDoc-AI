@@ -38,8 +38,8 @@ export function RecommendationBanner({ recommendation }: { recommendation: Recom
 
 export function AnalysisExplanation({ explanation }: { explanation: string }) {
   return (
-    <Card>
-      <CardHeader title="Analyse détaillée" />
+    <Card accent="navy">
+      <CardHeader accent="navy" title="Analyse détaillée" />
       <div className="space-y-3 px-5 py-4">
         <p className="whitespace-pre-line text-sm leading-relaxed text-[var(--color-ink-muted)]">
           {explanation}
