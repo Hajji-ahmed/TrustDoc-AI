@@ -9,19 +9,21 @@ function confidenceLabel(confidence: number) {
 
 export function ExtractedFields({ fields }: { fields: ExtractedField[] }) {
   return (
-    <Card>
-      <CardHeader
-        title="Informations extraites"
-        subtitle={`${fields.length} champ${fields.length > 1 ? 's' : ''} identifié${
-          fields.length > 1 ? 's' : ''
-        }`}
-      />
+    <Card className="flex min-h-0 flex-col overflow-hidden">
+      <div className="shrink-0">
+        <CardHeader
+          title="Informations extraites"
+          subtitle={`${fields.length} champ${fields.length > 1 ? 's' : ''} identifié${
+            fields.length > 1 ? 's' : ''
+          }`}
+        />
+      </div>
       {fields.length === 0 ? (
         <p className="p-5 text-sm text-[var(--color-ink-muted)]">
           Aucun champ n&apos;a pu être extrait de ce document.
         </p>
       ) : (
-        <ul className="divide-y divide-[var(--color-line)]">
+        <ul className="min-h-0 flex-1 divide-y divide-[var(--color-line)] overflow-y-auto">
           {fields.map((field) => (
             <li key={field.label} className="px-5 py-3">
               <p className="text-xs text-[var(--color-ink-muted)]">{field.label}</p>

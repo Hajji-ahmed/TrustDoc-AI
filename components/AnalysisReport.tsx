@@ -38,21 +38,22 @@ export function RecommendationBanner({ recommendation }: { recommendation: Recom
 
 export function AnalysisExplanation({ explanation }: { explanation: string }) {
   return (
-    <div className="space-y-4">
-      <Card>
+    <Card className="flex min-h-0 flex-col overflow-hidden">
+      <div className="shrink-0">
         <CardHeader title="Analyse détaillée" />
-        <p className="whitespace-pre-line p-5 text-sm leading-relaxed text-[var(--color-ink-muted)]">
+      </div>
+      <div className="min-h-0 flex-1 space-y-3 overflow-y-auto px-5 py-4">
+        <p className="whitespace-pre-line text-sm leading-relaxed text-[var(--color-ink-muted)]">
           {explanation}
         </p>
-      </Card>
-
-      <p className="text-xs leading-relaxed text-[var(--color-ink-muted)]">
-        DocShield AI est un outil d&apos;aide à la décision. Son analyse est produite par un
-        modèle d&apos;intelligence artificielle et peut comporter des erreurs, dans les deux
-        sens : un document authentique peut être signalé à tort, un document falsifié peut
-        passer inaperçu. Ce résultat ne constitue ni une expertise, ni une preuve, ni un
-        verdict juridique.
-      </p>
-    </div>
+        <p className="border-t border-[var(--color-line)] pt-3 text-xs leading-relaxed text-[var(--color-ink-muted)]">
+          DocShield AI est un outil d&apos;aide à la décision. Son analyse est produite par un
+          modèle d&apos;intelligence artificielle et peut comporter des erreurs, dans les deux
+          sens : un document authentique peut être signalé à tort, un document falsifié peut
+          passer inaperçu. Ce résultat ne constitue ni une expertise, ni une preuve, ni un
+          verdict juridique.
+        </p>
+      </div>
+    </Card>
   )
 }
