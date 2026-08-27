@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { analysisResultSchema } from '@/lib/schema'
 import { buildMockAnalysis } from '@/lib/mock'
+import { analyzeDocument, ModelOutputError } from '@/lib/openai'
 import type { AnalyzeError, AnalyzeErrorCode, AnalyzeResponse } from '@/lib/types'
 
 export const runtime = 'nodejs'
@@ -43,10 +44,25 @@ export async function POST(request: Request) {
     return NextResponse.json(body)
   }
 
-  // Chemin réel implémenté en tâche 7.
-  return errorResponse(
-    'UPSTREAM_FAILURE',
-    "L'analyse réelle n'est pas encore disponible.",
-    501,
-  )
+  try {
+    const result = await analyzeDocument(imageDataUrl, apiKey)
+    const body: AnalyzeResponse = { mode: 'live', result }
+    return NextResponse.json(body)
+  } catch (cause) {
+    if (cause instanceof ModelOutputError) {
+      console.error('[analyze] sortie du modèle invalide :', cause.message)
+      return errorResponse(
+        'INVALID_MODEL_OUTPUT',
+        "L'analyse produite n'est pas exploitable. Relancez l'analyse du document.",
+        502,
+      )
+    }
+
+    console.error("[analyze] échec de l'appel au fournisseur :", cause)
+    return errorResponse(
+      'UPSTREAM_FAILURE',
+      "Le service d'analyse est momentanément indisponible. Réessayez dans quelques instants.",
+      502,
+    )
+  }
 }
