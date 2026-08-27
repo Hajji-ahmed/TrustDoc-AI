@@ -1,4 +1,6 @@
-export type RiskLevel = 'LOW' | 'MEDIUM' | 'HIGH'
+import type { RiskLevel } from '@/lib/types'
+
+export type { RiskLevel }
 
 export const RISK_LABELS: Record<RiskLevel, string> = {
   LOW: 'Risque faible',

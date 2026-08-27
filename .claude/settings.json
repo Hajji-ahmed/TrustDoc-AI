@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "PowerShell(Get-PSDrive -PSProvider FileSystem | Select-Object Name, @{n='FreeGB';e={[math]::Round\\($_.Free/1GB,2\\)}}, @{n='UsedGB';e={[math]::Round\\($_.Used/1GB,2\\)}} | Format-Table -AutoSize)"
+      "PowerShell(Get-PSDrive -PSProvider FileSystem | Select-Object Name, @{n='FreeGB';e={[math]::Round\\($_.Free/1GB,2\\)}}, @{n='UsedGB';e={[math]::Round\\($_.Used/1GB,2\\)}} | Format-Table -AutoSize)",
+      "PowerShell(\"{0} GB libres sur C:\" -f [math]::Round\\(\\(Get-PSDrive C\\).Free/1GB,2\\))"
     ]
   }
 }
