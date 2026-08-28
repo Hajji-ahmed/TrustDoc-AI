@@ -112,7 +112,9 @@ so the reviewer sees \emph{where} to look, not only \emph{that} something is wro
   \item Low score returned together with a reject verdict $\rightarrow$ contradictory output.
 \end{enumerate}
 \vspace{2pt}
-Each finding changed the build. Interviews are under way to rank use cases.
+Each finding changed the build. An external tester at TecForge then ran three
+documents through the prototype and reported four further defects --- all
+corrected within the challenge window. See deliverable 03.
 \end{note}
 
 %% ------------------------------------------------------ 3
@@ -152,8 +154,10 @@ $\rightarrow$ Deterministic checks $\rightarrow$ Risk score $\rightarrow$ \mbox{
 \heading{4.}{Prototype --- live}
 
 \begin{itemize}
-  \item PDF, JPG, PNG. Preview and model input are the same image, so flagged
-        regions always align.
+  \item PDF, JPG, PNG. Every page is rendered and sent, so an inconsistency
+        between two pages of one document is visible to the model. Preview and
+        model input share the same images, so a flagged region always lands
+        where the reviewer looks.
   \item Strict JSON schema, re-validated server-side --- a malformed analysis is
         rejected, never half-displayed.
   \item A failed deterministic check raises the score and blocks an ``accept''

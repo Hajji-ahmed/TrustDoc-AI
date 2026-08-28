@@ -121,9 +121,11 @@ worthless one.
 \heading{3.}{Business model}
 
 \vspace{2pt}
+% Les 80mm retranchés couvrent les deux colonnes fixes (71mm) et les quatre
+% \tabcolsep des gouttières internes, que la largeur des colonnes ignore.
 \begin{tabular}{@{}>{\raggedright\arraybackslash}p{27mm}
                   >{\raggedright\arraybackslash}p{44mm}
-                  >{\raggedright\arraybackslash}p{\dimexpr\linewidth-79mm}@{}}
+                  >{\raggedright\arraybackslash}p{\dimexpr\linewidth-80mm}@{}}
 \rowcolor{zebra}\textbf{\color{navy}Tier} & \textbf{\color{navy}For} &
 \textbf{\color{navy}Basis} \\[2pt]
 Pay per document & Low volume, occasional checks & Per analysis, prepaid credits \\[3pt]
@@ -165,7 +167,7 @@ increasing sales-cycle length.
 \heading{5.}{Next 30 days}
 
 \begin{tabular}{@{}>{\raggedright\arraybackslash}p{16mm}
-                  >{\raggedright\arraybackslash}p{\dimexpr\linewidth-20mm}@{}}
+                  >{\raggedright\arraybackslash}p{\dimexpr\linewidth-21mm}@{}}
 \rowcolor{zebra}\textbf{\color{navy}Week 1} &
 Ten interviews with reviewers and their managers. Measure the current process
 before proposing to change it. \\[3pt]
@@ -186,5 +188,11 @@ If reviewers do not trust a flag they cannot verify themselves, the tool adds a
 step instead of removing one. That is the failure mode to test first --- before
 detection accuracy, before pricing, before market size.
 \end{badbox}
+
+\vspace{4pt}
+{\footnotesize\color{muted}
+Live prototype: \href{https://trust-doc-ai.vercel.app}{trust-doc-ai.vercel.app}
+\hfill
+Source: \href{https://github.com/Hajji-ahmed/TrustDoc-AI}{github.com/Hajji-ahmed/TrustDoc-AI}}
 
 \end{document}
