@@ -112,7 +112,8 @@
 \begin{tabular}{@{}>{\raggedright\arraybackslash}p{26mm}
                   >{\raggedright\arraybackslash}p{\dimexpr\linewidth-33mm}@{}}
 \rowcolor{zebra}\textbf{\color{navy}Company} & TecForge \\[3pt]
-\textbf{\color{navy}Tester} & Aissam EN-NAHEL --- written feedback, 28 August 2026 \\[3pt]
+\textbf{\color{navy}Tester} & Aissam EN-NAHEL, Human Resources --- written feedback,
+28 August 2026 \\[3pt]
 \rowcolor{zebra}\textbf{\color{navy}Material} & Three documents: a genuine ISO certificate, a
 flattened test invoice, and a real two-page invoice the tester altered himself
 to see whether the tool would notice. \\[3pt]
@@ -246,19 +247,27 @@ fixed in the pipeline and unproven in the result.
 % suite, ils coupaient la section 5 entre deux pages et laissaient la
 % checklist seule sur la dernière.
 \newpage
-\heading{4.}{Upcoming validations}
+\heading{4.}{Validation register}
 
-Reserved for the companies, clients and professional testers contacted during
-the challenge. Only verified conversations and real feedback are recorded here.
+One line per company contacted during the challenge. Only verified
+conversations and real feedback are recorded here; the blank rows are reserved
+for the validations still in progress.
 
 \vspace{3pt}
-\begin{tabular}{@{}>{\raggedright\arraybackslash}p{30mm}
-                  >{\raggedright\arraybackslash}p{28mm}
-                  >{\raggedright\arraybackslash}p{\dimexpr\linewidth-111mm}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{28mm}
+                  >{\raggedright\arraybackslash}p{33mm}
+                  >{\raggedright\arraybackslash}p{\dimexpr\linewidth-114mm}
                   >{\raggedright\arraybackslash}p{40mm}@{}}
 \rowcolor{zebra}\textbf{\color{navy}Company} & \textbf{\color{navy}Person / Role} &
 \textbf{\color{navy}Feedback / Learning} & \textbf{\color{navy}Change / Next action} \\[3pt]
-\rule{0pt}{16mm} & & & \\ \hline
+\rowcolor{zebra}
+TecForge &
+Aissam EN-NAHEL\newline \textit{Human Resources} &
+Extraction is reliable; the risk score is not. Four defects: a rule applied to
+the wrong field type, the summary contradicting the detail, pages never
+compared, and verification routed through the document itself. &
+Four corrections shipped, commit \texttt{761c596}. Retest the altered two-page
+invoice, then extend to other document families. \\ \hline
 \rule{0pt}{16mm} & & & \\ \hline
 \rule{0pt}{16mm} & & & \\ \hline
 \rule{0pt}{16mm} & & & \\ \hline
