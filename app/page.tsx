@@ -77,7 +77,7 @@ export default function DashboardPage() {
 
   const demoBadge =
     mode === 'demo' ? (
-      <span className="inline-flex shrink-0 items-center gap-2 rounded-full border border-[var(--color-brand)] bg-[var(--color-brand-soft)] px-3.5 py-1.5 text-xs font-semibold text-[#8c491a]">
+      <span className="inline-flex shrink-0 items-center gap-2 rounded-full border border-[var(--color-brand)] bg-[var(--color-brand-soft)] px-3.5 py-1.5 text-xs font-semibold text-[var(--color-brand-ink)]">
         <span className="h-1.5 w-1.5 rounded-full bg-[var(--color-brand)]" aria-hidden="true" />
         Mode démonstration
       </span>
@@ -91,7 +91,7 @@ export default function DashboardPage() {
         {/* La barre latérale est masquée sous 1024 px : la marque revient donc
             dans l'en-tête pour que l'application reste identifiable. */}
         <div className="flex items-center gap-3 px-5 pt-5 lg:hidden">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--color-brand)] text-sm font-bold text-[#f9f4ed]">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--color-brand)] text-sm font-bold text-[var(--color-on-dark)]">
             D
           </div>
           <p className="font-display text-lg leading-none">DocShield AI</p>

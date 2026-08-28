@@ -1,21 +1,22 @@
 // Accents d'identité des panneaux, dans la gamme du système. Aucun n'emprunte
-// au vert / ocre / brique de la signalétique de risque, ni au terracotta des
+// au vert / ocre / brique de la signalétique de risque, ni au bleu d'encre des
 // actions : un panneau ne peut donc être lu ni comme un verdict ni comme un
-// bouton.
+// bouton. Les noms d'accents restent ceux du système d'origine — seules leurs
+// valeurs ont changé.
 export type CardAccent = 'forest' | 'olive' | 'sand' | 'clay'
 
 const ACCENT_BAR: Record<CardAccent, string> = {
   forest: 'bg-[var(--color-forest)]',
   olive: 'bg-[var(--color-olive)]',
-  sand: 'bg-[#c0b6a5]',
-  clay: 'bg-[#a19786]',
+  sand: 'bg-[var(--color-accent-sand)]',
+  clay: 'bg-[var(--color-accent-clay)]',
 }
 
 const ACCENT_TINT: Record<CardAccent, string> = {
-  forest: 'bg-[#eef0e9]',
+  forest: 'bg-[var(--color-forest-tint)]',
   olive: 'bg-[var(--color-olive-soft)]',
-  sand: 'bg-[#f4efe6]',
-  clay: 'bg-[#f2ede4]',
+  sand: 'bg-[var(--color-accent-sand-soft)]',
+  clay: 'bg-[var(--color-accent-clay-soft)]',
 }
 
 export function Card({

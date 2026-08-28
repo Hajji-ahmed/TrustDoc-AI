@@ -5,7 +5,7 @@ const UPCOMING = ['Documents', 'Historique', 'Rapports', 'Paramètres']
 
 export function Sidebar() {
   return (
-    <aside className="hidden w-60 shrink-0 flex-col gap-8 rounded-r-[28px] bg-[var(--color-forest)] px-4 py-6 text-[#f9f4ed] lg:flex">
+    <aside className="hidden w-60 shrink-0 flex-col gap-8 rounded-r-[28px] bg-[var(--color-forest)] px-4 py-6 text-[var(--color-on-dark)] lg:flex">
       <div className="flex items-center gap-3 px-2">
         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--color-brand)]">
           <svg
@@ -13,7 +13,7 @@ export function Sidebar() {
             height="21"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="#f5ead8"
+            stroke="var(--color-on-dark)"
             strokeWidth="2.75"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -30,7 +30,7 @@ export function Sidebar() {
       </div>
 
       <nav className="flex flex-col gap-1">
-        <span className="flex items-center gap-3 rounded-full bg-[var(--color-brand)] px-4 py-2.5 text-sm font-semibold text-[#f5ead8]">
+        <span className="flex items-center gap-3 rounded-full bg-[var(--color-brand)] px-4 py-2.5 text-sm font-semibold text-[var(--color-on-dark)]">
           <svg
             width="18"
             height="18"
@@ -55,7 +55,7 @@ export function Sidebar() {
             key={label}
             aria-disabled="true"
             title="Non disponible dans ce prototype"
-            className="flex cursor-not-allowed items-center justify-between rounded-full px-4 py-2.5 text-sm text-[#f9f4ed]/35"
+            className="flex cursor-not-allowed items-center justify-between rounded-full px-4 py-2.5 text-sm text-[var(--color-on-dark)]/35"
           >
             {label}
             <span className="text-[10px] uppercase tracking-wide">bientôt</span>

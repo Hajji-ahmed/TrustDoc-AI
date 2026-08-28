@@ -128,8 +128,8 @@ export function DocumentPreview({
                 aria-label={`Page ${index + 1}${marked ? ', comporte des zones signalées' : ''}`}
                 className={`relative h-8 min-w-8 rounded-lg px-2.5 text-xs font-semibold transition-colors ${
                   current
-                    ? 'bg-[var(--color-brand)] text-[#f9f4ed]'
-                    : 'bg-[var(--color-brand-soft)] text-[#8c491a] hover:bg-[var(--color-brand-tint)]'
+                    ? 'bg-[var(--color-brand)] text-[var(--color-on-dark)]'
+                    : 'bg-[var(--color-brand-soft)] text-[var(--color-brand-ink)] hover:bg-[var(--color-brand-tint)]'
                 }`}
               >
                 {index + 1}

@@ -2,44 +2,60 @@
 @import "tailwindcss";
 
 @theme {
-  /* Système « Organic » — fond crème, surfaces claires, accent terracotta. */
-  --color-canvas: #f5ead8;
-  --color-surface: #f9f4ed;
-  --color-surface-warm: #ebddc5;
-  --color-line: #ddd4c5;
-  --color-ink: #201e1d;
-  --color-ink-muted: #82796a;
+  /* Système « Ardoise » — fond gris-bleu froid, surfaces claires, accent
+     bleu d'encre. La palette reprend celle des livrables LaTeX, pour que
+     l'application et les documents remis se lisent comme un même produit.
+     Seules les couleurs changent : structure, typographie, rayons et ombres
+     sont ceux du système précédent. */
+  --color-canvas: #eef2f7;
+  --color-surface: #ffffff;
+  --color-surface-warm: #dde6f0;
+  --color-line: #ccd6e2;
+  --color-ink: #16202a;
+  --color-ink-muted: #5f6d7e;
 
-  /* Terracotta : actions et navigation active. Jamais sur un panneau, pour
+  /* Bleu d'encre : actions et navigation active. Jamais sur un panneau, pour
      qu'il ne puisse pas être confondu avec un niveau de risque. */
-  --color-brand: #c67139;
-  --color-brand-hover: #b2622d;
-  --color-brand-soft: #fff2eb;
-  --color-brand-tint: #ffe1d0;
+  --color-brand: #1d4e79;
+  --color-brand-hover: #163d5f;
+  --color-brand-soft: #e9f1f9;
+  --color-brand-tint: #cfe0f0;
+  /* Texte lisible posé sur brand-soft. */
+  --color-brand-ink: #14405f;
 
-  /* Olive : barre latérale et accents secondaires. */
-  --color-forest: #272e1b;
-  --color-forest-soft: #3d472b;
-  --color-olive: #7a8a5e;
-  --color-olive-soft: #f0fae1;
-  --color-olive-tint: #e1eecc;
+  /* Ardoise : barre latérale et accents secondaires. */
+  --color-forest: #16202a;
+  --color-forest-soft: #26333f;
+  --color-olive: #3e6d9c;
+  --color-olive-soft: #eaf1f8;
 
-  /* Signalétique de risque, retenue dans la gamme chaude du système mais
-     tenue à distance du terracotta d'action. Réservée au risque. */
-  --color-risk-low: #4f6b3a;
-  --color-risk-low-soft: #f0fae1;
-  --color-risk-medium: #8c6d16;
-  --color-risk-medium-soft: #fbf1d8;
-  --color-risk-high: #93211d;
-  --color-risk-high-soft: #fdeae7;
+  /* Texte et glyphes posés sur les fonds sombres. */
+  --color-on-dark: #eef3f8;
+
+  /* Accents de panneau : gris-bleu désaturés. Ils doivent rester distincts
+     du bleu d'action comme de la signalétique de risque. */
+  --color-accent-sand: #8fa3b8;
+  --color-accent-sand-soft: #eef2f7;
+  --color-accent-clay: #6f8296;
+  --color-accent-clay-soft: #e9eef3;
+  --color-forest-tint: #e7ebf0;
+
+  /* Signalétique de risque. Vert, ambre et brique restent la convention
+     universelle du domaine : on ne la refroidit pas avec le reste. */
+  --color-risk-low: #1b6e4f;
+  --color-risk-low-soft: #eaf5ef;
+  --color-risk-medium: #8a6410;
+  --color-risk-medium-soft: #fbf2dd;
+  --color-risk-high: #a8322d;
+  --color-risk-high-soft: #fbeceb;
 
   --font-heading: 'Caprasimo', Georgia, serif;
   --font-body: 'Figtree', system-ui, -apple-system, sans-serif;
 
   --radius-panel: 26px;
 
-  --shadow-card: 0 1px 2px rgba(46, 43, 37, 0.08), 0 4px 14px rgba(46, 43, 37, 0.07);
-  --shadow-float: 0 12px 32px rgba(46, 43, 37, 0.16);
+  --shadow-card: 0 1px 2px rgba(22, 32, 42, 0.08), 0 4px 14px rgba(22, 32, 42, 0.07);
+  --shadow-float: 0 12px 32px rgba(22, 32, 42, 0.16);
 }
 
 html,
