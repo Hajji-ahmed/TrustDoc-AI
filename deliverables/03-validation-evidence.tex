@@ -192,7 +192,9 @@ a tuning problem; all four were logic errors.
 %% ------------------------------------------------------ 3
 \heading{3.}{From feedback to shipped change}
 
-Every point raised was fixed and pushed, not queued. Commit \texttt{761c596} on
+Every point raised was corrected and deployed within the challenge window, not
+deferred to a backlog. The corresponding changes are public in the project
+repository:
 \href{https://github.com/Hajji-ahmed/TrustDoc-AI}{github.com/Hajji-ahmed/TrustDoc-AI}.
 
 \vspace{3pt}
@@ -263,11 +265,14 @@ for the validations still in progress.
 \rowcolor{zebra}
 TecForge &
 Aissam EN-NAHEL\newline \textit{Human Resources} &
-Extraction is reliable; the risk score is not. Four defects: a rule applied to
-the wrong field type, the summary contradicting the detail, pages never
-compared, and verification routed through the document itself. &
-Four corrections shipped, commit \texttt{761c596}. Retest the altered two-page
-invoice, then extend to other document families. \\ \hline
+Document reading judged reliable, including on flattened scans; the risk
+assessment was not. Four defects reported: a validation rule applied to the
+wrong type of field, a summary inconsistent with the detailed findings, no
+comparison between the pages of a single document, and a verification step
+relying on the document's own contact details. &
+All four defects corrected and deployed within the challenge window.
+Next: retest the altered two-page invoice, then extend testing to other
+document families. \\ \hline
 \rule{0pt}{16mm} & & & \\ \hline
 \rule{0pt}{16mm} & & & \\ \hline
 \rule{0pt}{16mm} & & & \\ \hline
@@ -291,7 +296,7 @@ companies listed above.
 \yes TecForge feedback captured, reproduced verbatim\\
 \yes Screenshot evidence included\\
 \yes Root cause identified in code for all four defects\\
-\yes Corrections implemented and pushed --- commit \texttt{761c596}\\
+\yes Corrections implemented and deployed, published in the project repository\\
 \no Retest of the two-page invoice with the corrected prototype\\
 \no Additional companies, feedback and resulting changes
 \end{note}
