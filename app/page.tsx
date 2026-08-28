@@ -1,10 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Card, CardHeader } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Sidebar } from '@/components/Sidebar'
-import { SessionStats, EMPTY_SESSION, type SessionCounts } from '@/components/SessionStats'
+import { StatsPanel } from '@/components/StatsPanel'
+import { EMPTY_STATS, type Stats } from '@/lib/stats-shape'
 import { EmptyState } from '@/components/states/EmptyState'
 import { LoadingState } from '@/components/states/LoadingState'
 import { ErrorState } from '@/components/states/ErrorState'
@@ -26,7 +27,24 @@ export default function DashboardPage() {
   const [mode, setMode] = useState<AnalysisMode | null>(null)
   const [errorMessage, setErrorMessage] = useState<string>('')
   const [activeElementId, setActiveElementId] = useState<string | null>(null)
-  const [session, setSession] = useState<SessionCounts>(EMPTY_SESSION)
+  const [stats, setStats] = useState<Stats>(EMPTY_STATS)
+
+  // Les compteurs viennent du serveur : au montage pour retrouver le cumul
+  // existant, puis après chaque analyse pour refléter l'incrément.
+  const refreshStats = useCallback(async () => {
+    try {
+      const response = await fetch('/api/stats', { cache: 'no-store' })
+      if (!response.ok) return
+      setStats((await response.json()) as Stats)
+    } catch {
+      // Compteurs indisponibles : ils restent à leur dernière valeur connue.
+      // Ce n'est pas une raison d'interrompre l'analyse en cours.
+    }
+  }, [])
+
+  useEffect(() => {
+    void refreshStats()
+  }, [refreshStats])
 
   function handlePrepared(doc: PreparedDocument) {
     setPreparedDocument(doc)
@@ -61,14 +79,10 @@ export default function DashboardPage() {
         return
       }
 
-      const level = payload.result.riskLevel
-      setSession((previous) => ({
-        total: previous.total + 1,
-        byLevel: { ...previous.byLevel, [level]: previous.byLevel[level] + 1 },
-      }))
       setResult(payload.result)
       setMode(payload.mode)
       setStatus('success')
+      void refreshStats()
     } catch {
       setErrorMessage(
         "La connexion au service d'analyse a échoué. Vérifiez votre réseau puis réessayez.",
@@ -112,7 +126,7 @@ export default function DashboardPage() {
         </header>
 
         <main className="space-y-6 px-5 pb-10 sm:px-7">
-          <SessionStats counts={session} />
+          <StatsPanel stats={stats} />
 
           {/* Trois paliers : une colonne sous 768 px, résultats sur deux colonnes
               entre 768 et 1280, document et résultats côte à côte au-delà. */}

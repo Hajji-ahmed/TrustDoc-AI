@@ -1,17 +1,8 @@
-import type { RiskLevel } from '@/lib/types'
+import type { Stats } from '@/lib/stats-shape'
 
-// Compteurs de la session en cours uniquement. Le prototype ne conserve rien
-// entre deux chargements : afficher un cumul historique reviendrait à inventer
-// un chiffre sur un outil dont l'objet est justement de ne pas en inventer.
-export interface SessionCounts {
-  total: number
-  byLevel: Record<RiskLevel, number>
-}
-
-export const EMPTY_SESSION: SessionCounts = {
-  total: 0,
-  byLevel: { LOW: 0, MEDIUM: 0, HIGH: 0 },
-}
+// Compteurs cumulés, relus depuis /api/stats. Ils survivent au rechargement de
+// la page et au redémarrage du serveur : l'état vit dans data/stats.json, pas
+// dans le composant.
 
 const TILES = [
   {
@@ -44,12 +35,19 @@ const TILES = [
   },
 ]
 
-export function SessionStats({ counts }: { counts: SessionCounts }) {
+function formatLastAnalysis(iso: string | null) {
+  if (!iso) return "Aucune analyse enregistrée pour l'instant."
+  const date = new Date(iso)
+  if (Number.isNaN(date.getTime())) return "Aucune analyse enregistrée pour l'instant."
+  return `Dernière analyse le ${date.toLocaleDateString('fr-FR')} à ${date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}.`
+}
+
+export function StatsPanel({ stats }: { stats: Stats }) {
   return (
-    <section aria-label="Analyses de la session en cours">
+    <section aria-label="Statistiques cumulées des analyses">
       <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
         {TILES.map((tile) => {
-          const value = tile.key === 'total' ? counts.total : counts.byLevel[tile.key]
+          const value = tile.key === 'total' ? stats.totalAnalyses : stats.byLevel[tile.key]
           return (
             <div key={tile.key} className={`rounded-[var(--radius-panel)] px-5 py-4 ${tile.bg}`}>
               <div className={`mb-3 h-8 w-8 rounded-lg ${tile.chip}`} aria-hidden="true" />
@@ -60,8 +58,7 @@ export function SessionStats({ counts }: { counts: SessionCounts }) {
         })}
       </div>
       <p className="mt-2 text-xs text-[var(--color-ink-muted)]">
-        Compteurs de la session en cours. Aucune analyse n&apos;est conservée après
-        rechargement de la page.
+        {formatLastAnalysis(stats.lastAnalysisAt)}
       </p>
     </section>
   )
