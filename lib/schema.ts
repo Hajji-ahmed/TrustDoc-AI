@@ -34,6 +34,7 @@ export const analysisResultSchema = z.object({
   suspiciousRegions: z.array(
     z.object({
       elementId: z.string().min(1),
+      page: z.number().int().min(1),
       x: z.number(),
       y: z.number(),
       width: z.number(),
@@ -111,11 +112,16 @@ export const ANALYSIS_JSON_SCHEMA = {
       items: {
         type: 'object',
         additionalProperties: false,
-        required: ['elementId', 'x', 'y', 'width', 'height', 'label'],
+        required: ['elementId', 'page', 'x', 'y', 'width', 'height', 'label'],
         properties: {
           elementId: {
             type: 'string',
             description: 'Doit correspondre à un id présent dans suspiciousElements.',
+          },
+          page: {
+            type: 'integer',
+            description:
+              'Numéro de la page portant la zone, à partir de 1, tel qu’annoncé avant chaque image. Les coordonnées sont relatives à cette page.',
           },
           x: { type: 'number', description: 'Coin gauche, normalisé entre 0 et 1.' },
           y: { type: 'number', description: 'Coin haut, normalisé entre 0 et 1.' },

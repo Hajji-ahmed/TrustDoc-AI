@@ -4,6 +4,7 @@ import { buildMockAnalysis } from '@/lib/mock'
 import { analyzeDocument, ModelOutputError } from '@/lib/openai'
 import { consolidateAnalysis } from '@/lib/validators'
 import { recordAnalysis } from '@/lib/stats'
+import { MAX_ANALYZED_PAGES } from '@/lib/pdf'
 import type {
   AnalysisMode,
   AnalysisResult,
@@ -44,11 +45,24 @@ export async function POST(request: Request) {
     return errorResponse('INVALID_REQUEST', 'La requête envoyée est illisible.', 400)
   }
 
-  const imageDataUrl = (payload as { imageDataUrl?: unknown })?.imageDataUrl
-  if (typeof imageDataUrl !== 'string' || !imageDataUrl.startsWith('data:image/')) {
+  const pages = (payload as { pages?: unknown })?.pages
+  const isImageDataUrl = (page: unknown) =>
+    typeof page === 'string' && page.startsWith('data:image/')
+
+  if (!Array.isArray(pages) || pages.length === 0 || !pages.every(isImageDataUrl)) {
     return errorResponse(
       'INVALID_REQUEST',
       "Aucune image de document exploitable n'a été reçue.",
+      400,
+    )
+  }
+
+  // Le plafond est déjà appliqué au rendu ; on le revérifie ici parce que la
+  // route est atteignable sans passer par l'interface.
+  if (pages.length > MAX_ANALYZED_PAGES) {
+    return errorResponse(
+      'INVALID_REQUEST',
+      `Une analyse porte sur ${MAX_ANALYZED_PAGES} pages au maximum.`,
       400,
     )
   }
@@ -66,7 +80,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const result = await analyzeDocument(imageDataUrl, apiKey)
+    const result = await analyzeDocument(pages, apiKey)
     return respondWithResult(consolidateAnalysis(result), 'live')
   } catch (cause) {
     if (cause instanceof ModelOutputError) {

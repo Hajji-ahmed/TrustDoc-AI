@@ -9,11 +9,19 @@ export class UpstreamError extends Error {}
 export class ModelOutputError extends Error {}
 
 export async function analyzeDocument(
-  imageDataUrl: string,
+  pageDataUrls: string[],
   apiKey: string,
 ): Promise<AnalysisResult> {
   const client = new OpenAI({ apiKey })
   const model = process.env.OPENAI_MODEL?.trim() || DEFAULT_MODEL
+
+  // Toutes les pages partent dans un seul message : c'est ce qui permet au
+  // modèle de confronter les pages entre elles. Chaque image est précédée de
+  // son numéro, sur lequel s'appuie le champ page des zones suspectes.
+  const intro =
+    pageDataUrls.length > 1
+      ? `Analyse ce document de ${pageDataUrls.length} pages et renvoie le résultat structuré attendu. Les pages sont transmises dans l'ordre ci-dessous et forment un seul et même document.`
+      : 'Analyse ce document et renvoie le résultat structuré attendu.'
 
   let rawContent: string | null
   try {
@@ -24,11 +32,17 @@ export async function analyzeDocument(
         {
           role: 'user',
           content: [
-            {
-              type: 'text',
-              text: 'Analyse ce document et renvoie le résultat structuré attendu.',
-            },
-            { type: 'image_url', image_url: { url: imageDataUrl, detail: 'high' } },
+            { type: 'text' as const, text: intro },
+            ...pageDataUrls.flatMap((dataUrl, index) => [
+              {
+                type: 'text' as const,
+                text: `Page ${index + 1} sur ${pageDataUrls.length} :`,
+              },
+              {
+                type: 'image_url' as const,
+                image_url: { url: dataUrl, detail: 'high' as const },
+              },
+            ]),
           ],
         },
       ],

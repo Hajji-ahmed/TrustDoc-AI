@@ -42,7 +42,15 @@ function formatLastAnalysis(iso: string | null) {
   return `Dernière analyse le ${date.toLocaleDateString('fr-FR')} à ${date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}.`
 }
 
-export function StatsPanel({ stats }: { stats: Stats }) {
+export function StatsPanel({
+  stats,
+  unavailable = false,
+  onRetry,
+}: {
+  stats: Stats
+  unavailable?: boolean
+  onRetry?: () => void
+}) {
   return (
     <section aria-label="Statistiques cumulées des analyses">
       <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
@@ -51,15 +59,35 @@ export function StatsPanel({ stats }: { stats: Stats }) {
           return (
             <div key={tile.key} className={`rounded-[var(--radius-panel)] px-5 py-4 ${tile.bg}`}>
               <div className={`mb-3 h-8 w-8 rounded-lg ${tile.chip}`} aria-hidden="true" />
-              <p className="font-display text-3xl leading-none">{value}</p>
+              {/* Un tiret, jamais un zéro, tant que le compteur n'a pas été lu :
+                  « 0 » affirmerait qu'aucun document n'a été analysé. */}
+              <p className="font-display text-3xl leading-none">{unavailable ? '—' : value}</p>
               <p className={`mt-1.5 text-xs ${tile.text}`}>{tile.label}</p>
             </div>
           )
         })}
       </div>
-      <p className="mt-2 text-xs text-[var(--color-ink-muted)]">
-        {formatLastAnalysis(stats.lastAnalysisAt)}
-      </p>
+
+      {unavailable ? (
+        <p className="mt-2 flex flex-wrap items-center gap-2 text-xs text-[var(--color-risk-high)]">
+          <span>
+            Compteurs indisponibles : le service de statistiques n&apos;a pas répondu.
+          </span>
+          {onRetry ? (
+            <button
+              type="button"
+              onClick={onRetry}
+              className="rounded-full border border-[var(--color-risk-high)] px-2.5 py-0.5 font-semibold transition-colors hover:bg-[var(--color-risk-high-soft)]"
+            >
+              Réessayer
+            </button>
+          ) : null}
+        </p>
+      ) : (
+        <p className="mt-2 text-xs text-[var(--color-ink-muted)]">
+          {formatLastAnalysis(stats.lastAnalysisAt)}
+        </p>
+      )}
     </section>
   )
 }

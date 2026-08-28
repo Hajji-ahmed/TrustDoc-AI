@@ -2,6 +2,13 @@ const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024
 const MAX_EDGE_PX = 1600
 const ACCEPTED_TYPES = ['application/pdf', 'image/jpeg', 'image/png']
 
+// Toutes les pages sont envoyées au modèle : une incohérence entre la page 1
+// et la page 2 — un numéro de facture qui change en cours de document — est
+// invisible tant que les pages sont analysées séparément ou ignorées.
+// Le plafond borne le coût et la latence d'une analyse ; au-delà, les pages
+// excédentaires ne sont pas rendues et l'interface le dit.
+export const MAX_ANALYZED_PAGES = 6
+
 export type DocumentPrepErrorCode =
   | 'UNSUPPORTED_TYPE'
   | 'TOO_LARGE'
@@ -18,11 +25,18 @@ export class DocumentPrepError extends Error {
   }
 }
 
-export interface PreparedDocument {
+export interface PreparedPage {
   dataUrl: string
   width: number
   height: number
+}
+
+export interface PreparedDocument {
+  // Pages effectivement rendues, dans l'ordre du document.
+  pages: PreparedPage[]
   fileName: string
+  // Nombre de pages du fichier d'origine, qui peut dépasser pages.length
+  // lorsque le plafond s'applique.
   pageCount: number
 }
 
@@ -53,9 +67,7 @@ async function prepareImage(file: File): Promise<PreparedDocument> {
     context.drawImage(image, 0, 0, width, height)
 
     return {
-      dataUrl: canvas.toDataURL('image/png'),
-      width,
-      height,
+      pages: [{ dataUrl: canvas.toDataURL('image/png'), width, height }],
       fileName: file.name,
       pageCount: 1,
     }
@@ -76,32 +88,37 @@ async function preparePdf(file: File): Promise<PreparedDocument> {
 
     const buffer = await file.arrayBuffer()
     const pdf = await pdfjs.getDocument({ data: buffer }).promise
-    const page = await pdf.getPage(1)
+    const renderedCount = Math.min(pdf.numPages, MAX_ANALYZED_PAGES)
 
-    const baseViewport = page.getViewport({ scale: 1 })
-    const { ratio } = scaledSize(baseViewport.width, baseViewport.height)
-    // On rend au-delà de la taille cible puis on laisse le ratio ramener à
-    // MAX_EDGE_PX : un rendu direct à l'échelle 1 produirait un texte trop
-    // dégradé pour être lu par le modèle.
-    const viewport = page.getViewport({ scale: ratio * 2 })
+    const pages: PreparedPage[] = []
+    for (let pageNumber = 1; pageNumber <= renderedCount; pageNumber += 1) {
+      const page = await pdf.getPage(pageNumber)
 
-    const canvas = document.createElement('canvas')
-    canvas.width = Math.round(viewport.width)
-    canvas.height = Math.round(viewport.height)
-    const context = canvas.getContext('2d')
-    if (!context) {
-      throw new Error('contexte canvas indisponible')
+      const baseViewport = page.getViewport({ scale: 1 })
+      const { ratio } = scaledSize(baseViewport.width, baseViewport.height)
+      // On rend au-delà de la taille cible puis on laisse le ratio ramener à
+      // MAX_EDGE_PX : un rendu direct à l'échelle 1 produirait un texte trop
+      // dégradé pour être lu par le modèle.
+      const viewport = page.getViewport({ scale: ratio * 2 })
+
+      const canvas = document.createElement('canvas')
+      canvas.width = Math.round(viewport.width)
+      canvas.height = Math.round(viewport.height)
+      const context = canvas.getContext('2d')
+      if (!context) {
+        throw new Error('contexte canvas indisponible')
+      }
+
+      await page.render({ canvasContext: context, viewport }).promise
+
+      pages.push({
+        dataUrl: canvas.toDataURL('image/png'),
+        width: canvas.width,
+        height: canvas.height,
+      })
     }
 
-    await page.render({ canvasContext: context, viewport }).promise
-
-    return {
-      dataUrl: canvas.toDataURL('image/png'),
-      width: canvas.width,
-      height: canvas.height,
-      fileName: file.name,
-      pageCount: pdf.numPages,
-    }
+    return { pages, fileName: file.name, pageCount: pdf.numPages }
   } catch {
     throw new DocumentPrepError(
       'UNREADABLE_PDF',

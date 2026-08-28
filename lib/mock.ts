@@ -50,6 +50,7 @@ export function buildMockAnalysis(): AnalysisResult {
     suspiciousRegions: [
       {
         elementId: 'sus-1',
+        page: 1,
         x: 0.61,
         y: 0.72,
         width: 0.27,
@@ -58,6 +59,7 @@ export function buildMockAnalysis(): AnalysisResult {
       },
       {
         elementId: 'sus-2',
+        page: 1,
         x: 0.58,
         y: 0.44,
         width: 0.3,

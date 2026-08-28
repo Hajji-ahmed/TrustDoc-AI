@@ -25,6 +25,9 @@ export interface SuspiciousElement {
 
 export interface SuspiciousRegion {
   elementId: string
+  // Page portant la zone, numérotée à partir de 1. Les coordonnées sont
+  // normalisées par rapport à cette page-là, pas au document entier.
+  page: number
   x: number
   y: number
   width: number

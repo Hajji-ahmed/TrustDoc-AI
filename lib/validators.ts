@@ -178,17 +178,28 @@ function checkDates(fields: ExtractedField[]): SuspiciousElement[] {
   ]
 }
 
-/**
- * Repérage d'un IBAN par la forme de la valeur, sans se fier au libellé :
- * un même numéro peut être annoncé « IBAN », « RIB », « Numéro de compte »
- * ou « Coordonnées bancaires ». La forme, elle, ne change pas.
- */
 function looksLikeIban(value: string): boolean {
   return /^[A-Z]{2}\d{2}[A-Z0-9]{11,30}$/.test(value.replace(/[\s-]/g, '').toUpperCase())
 }
 
+/**
+ * Le contrôle IBAN exige deux conditions : un libellé qui annonce des
+ * coordonnées bancaires, et une valeur qui en a la forme.
+ *
+ * La forme seule ne suffit pas. « 2 lettres, 2 chiffres, puis 11 à 30
+ * caractères » décrit aussi bien un IBAN qu'un numéro de certificat ou de
+ * référence : le contrôle mod-97 échouait alors sur des documents
+ * parfaitement authentiques, et le plancher de score plus bas transformait
+ * ce faux positif en « risque modéré ».
+ *
+ * Le compromis est assumé : un IBAN rangé sous un libellé qui ne le dit pas
+ * échappe désormais au contrôle. Sur un outil de pré-contrôle, accuser à tort
+ * un vrai document coûte plus cher que laisser passer une vérification.
+ */
+const BANK_ACCOUNT_LABEL = /\biban\b|\brib\b|bancaire|\bbanque\b|\bcompte\b/
+
 function checkIban(fields: ExtractedField[]): SuspiciousElement[] {
-  return fields
+  return findFields(fields, BANK_ACCOUNT_LABEL)
     .filter((field) => looksLikeIban(field.value))
     .filter((field) => !isValidIban(field.value))
     .map((field, index) => ({
@@ -216,12 +227,34 @@ export function runDeterministicChecks(fields: ExtractedField[]): SuspiciousElem
 // ------------------------------------------------------------- consolidation
 
 /**
- * Applique les contrôles déterministes au résultat du modèle, puis remet en
- * cohérence le score, le niveau et la recommandation.
+ * Le texte d'analyse doit dire la même chose que le compteur d'anomalies.
  *
- * Deux incohérences sont corrigées ici :
+ * Le modèle rédige son explication avant que les contrôles déterministes ne
+ * tournent : il peut donc écrire « aucun problème » pendant que ces contrôles
+ * ajoutent une anomalie à la liste. Attribuer chaque constat à son étape lève
+ * la contradiction sans réécrire la prose du modèle — les deux affirmations
+ * sont vraies, elles ne portent simplement pas sur la même chose.
+ */
+function summarizeChecks(findings: SuspiciousElement[]): string {
+  if (findings.length === 0) {
+    return (
+      'Contrôles automatiques : aucun écart relevé sur les champs vérifiables ' +
+      '(identifiant ICE, clé IBAN, arithmétique HT/TVA/TTC, ordre des dates).'
+    )
+  }
+
+  const count = `${findings.length} point${findings.length > 1 ? 's' : ''} à vérifier`
+  return `Contrôles automatiques : ${count} — ${findings.map((f) => f.title).join(' ; ')}.`
+}
+
+/**
+ * Applique les contrôles déterministes au résultat du modèle, puis remet en
+ * cohérence le score, le niveau, la recommandation et le texte d'analyse.
+ *
+ * Trois incohérences sont corrigées ici :
  * - un contrôle mathématique en échec ne peut pas cohabiter avec un score bas ;
- * - une recommandation ne peut pas contredire le score qui l'accompagne.
+ * - une recommandation ne peut pas contredire le score qui l'accompagne ;
+ * - le texte d'analyse ne peut pas contredire la liste des anomalies.
  */
 export function consolidateAnalysis(result: AnalysisResult): AnalysisResult {
   const findings = runDeterministicChecks(result.extractedInformation)
@@ -261,6 +294,7 @@ export function consolidateAnalysis(result: AnalysisResult): AnalysisResult {
     riskScore,
     riskLevel: riskLevelFromScore(riskScore),
     suspiciousElements: [...result.suspiciousElements, ...findings],
+    explanation: `Analyse visuelle : ${result.explanation.trim()}\n\n${summarizeChecks(findings)}`,
     recommendation,
   }
 }
