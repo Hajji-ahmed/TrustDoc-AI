@@ -1,0 +1,296 @@
+% DocShield AI — Validation Evidence
+% SUM 72H Build Challenge — Deliverable 03
+% Compile: pdflatex 03-validation-evidence.tex  (twice)
+
+\documentclass[10pt,a4paper]{article}
+
+% tcolorbox charge xcolor sans l'option « table » ; on la passe en amont pour
+% que \rowcolor soit disponible.
+\PassOptionsToPackage{table}{xcolor}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=16mm,top=14mm,bottom=12mm]{geometry}
+
+\usepackage{charter}
+\usepackage[activate={true,nocompatibility},final,tracking=true,
+            factor=1100,stretch=12,shrink=12]{microtype}
+
+\usepackage{amssymb}
+\usepackage{xcolor}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{graphicx}
+\usepackage[most]{tcolorbox}
+\usepackage[hidelinks]{hyperref}
+
+\definecolor{navy}{HTML}{123A5F}
+\definecolor{steel}{HTML}{3E6D9C}
+\definecolor{good}{HTML}{1B6E4F}
+\definecolor{goodbg}{HTML}{F1F8F4}
+\definecolor{bad}{HTML}{A8322D}
+\definecolor{badbg}{HTML}{FDF3F2}
+\definecolor{ink}{HTML}{16202A}
+\definecolor{muted}{HTML}{68727E}
+\definecolor{zebra}{HTML}{F4F7FA}
+\definecolor{shotline}{HTML}{D3DAE3}
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{3pt}
+\color{ink}
+
+\setlist[itemize]{leftmargin=13pt,itemsep=2pt,topsep=2pt,parsep=0pt}
+\setlist[enumerate]{leftmargin=15pt,itemsep=3pt,topsep=2pt,parsep=0pt}
+
+%% ------------------------------------------------------ encadrés à onglet
+\tcbset{
+  callout/.style={
+    enhanced, sharp corners=downhill, arc=1.5pt,
+    colback=white, boxrule=0.8pt,
+    left=6pt, right=6pt, top=8pt, bottom=6pt,
+    attach boxed title to top left={xshift=7pt, yshift=-\tcboxedtitleheight/2},
+    boxed title style={arc=1pt, boxrule=0pt, left=5pt, right=5pt,
+                       top=1.5pt, bottom=1.5pt},
+    fonttitle=\footnotesize\bfseries\color{white},
+  }
+}
+\newtcolorbox{note}[1]{callout, colframe=navy, colbacktitle=navy, title={#1}}
+\newtcolorbox{goodbox}[1]{callout, colframe=good, colback=goodbg,
+  colbacktitle=good, title={#1}}
+\newtcolorbox{badbox}[1]{callout, colframe=bad, colback=badbg,
+  colbacktitle=bad, title={#1}}
+
+%% ------------------------------------------------------ titres
+\newcommand{\heading}[2]{%
+  \par\vspace{8pt}{\color{navy}\bfseries #1\hspace{6pt}#2}\par\vspace{-3pt}}
+
+\newcommand{\yes}{\textcolor{good}{\small$\checkmark$}~}
+\newcommand{\no}{\textcolor{bad}{\small$\times$}~}
+\newcommand{\fld}[1]{\textbf{\color{navy}#1}\hspace{5pt}}
+\newcommand{\shipped}{{\footnotesize\color{good}\bfseries SHIPPED}}
+\newcommand{\open}{{\footnotesize\color{bad}\bfseries TO RETEST}}
+
+%% ------------------------------------------------------ capture d'écran
+\newcommand{\shotwidth}{0.94\linewidth}
+\newcommand{\shot}[2]{%
+  \par\vspace{4pt}%
+  \begingroup\setlength{\fboxsep}{1.5pt}\setlength{\fboxrule}{0.5pt}%
+  \centering
+  \fcolorbox{shotline}{white}{\includegraphics[width=\shotwidth]{#1}}%
+  \par\vspace{2pt}%
+  \begin{minipage}{\shotwidth}\centering
+    {\footnotesize\color{muted}#2}
+  \end{minipage}\par
+  \endgroup
+  \vspace{3pt}%
+}
+
+\begin{document}
+
+%% ------------------------------------------------------ en-tête
+\noindent
+\begin{minipage}[b]{0.62\linewidth}
+  \colorbox{navy}{\makebox[7mm][c]{\rule[-2pt]{0pt}{12pt}\color{white}\bfseries 03}}%
+  \hspace{5pt}{\Large\bfseries\color{navy}Validation Evidence}\\[3pt]
+  \hspace{12mm}{\color{muted}DocShield AI --- tested by a third party, and what changed as a result}
+\end{minipage}\hfill
+\begin{minipage}[b]{0.36\linewidth}
+  \raggedleft\footnotesize\color{muted}
+  SUM 72H Build Challenge\\[1pt]
+  Deliverable 03 --- Validation Evidence\\[1pt]
+  Ahmed Hajji \ $\cdot$ \ Individual
+\end{minipage}
+
+\vspace{5pt}
+\textcolor{navy}{\rule{\linewidth}{1pt}}
+
+%% ------------------------------------------------------ 1
+\heading{1.}{First external validation --- TecForge}
+
+\vspace{2pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{26mm}
+                  >{\raggedright\arraybackslash}p{\dimexpr\linewidth-33mm}@{}}
+\rowcolor{zebra}\textbf{\color{navy}Company} & TecForge \\[3pt]
+\textbf{\color{navy}Tester} & Aissam EN-NAHEL --- written feedback, 28 August 2026 \\[3pt]
+\rowcolor{zebra}\textbf{\color{navy}Material} & Three documents: a genuine ISO certificate, a
+flattened test invoice, and a real two-page invoice the tester altered himself
+to see whether the tool would notice. \\[3pt]
+\textbf{\color{navy}Method} & Unassisted use of the deployed prototype, followed by
+written feedback. No script, no guidance. \\
+\end{tabular}
+
+\vspace{6pt}
+\begin{note}{Verdict in the tester's own words}
+The idea was judged useful and the text extraction very good --- including on a
+flattened PDF read as a scanned image. \emph{``Je pense que le score de risque
+doit être plus fiable''}: the concern was the reliability of the risk score, not
+the reading of the document.
+\end{note}
+
+\shot{assets/feedback-000.png}{Feedback received from Aissam EN-NAHEL (TecForge), reproduced verbatim.}
+
+\vspace{2pt}
+\noindent
+\begin{minipage}[t]{0.485\linewidth}
+\begin{goodbox}{Held up under test}
+\begin{itemize}[leftmargin=14pt,itemsep=3pt,topsep=1pt,
+                label=\textcolor{good}{\small$\checkmark$}]
+  \item Interface judged simple and clear.
+  \item Extraction accurate even on a flattened PDF.
+  \item Fields read correctly: name, date, amount.
+\end{itemize}
+\end{goodbox}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.485\linewidth}
+\begin{badbox}{Did not hold up}
+\begin{itemize}[leftmargin=14pt,itemsep=3pt,topsep=1pt,
+                label=\textcolor{bad}{\small$\times$}]
+  \item A genuine document scored as suspicious.
+  \item Narrative contradicted the anomaly count.
+  \item A deliberate forgery went unnoticed.
+\end{itemize}
+\end{badbox}
+\end{minipage}
+
+%% ------------------------------------------------------ 2
+\heading{2.}{The four defects, and their cause in the code}
+
+Each report was traced to a specific line before anything was changed. None was
+a tuning problem; all four were logic errors.
+
+\vspace{3pt}
+\begin{enumerate}[label=\textcolor{navy}{\bfseries\arabic*.}]
+  \item \fld{A genuine ISO certificate scored 50/100.}
+        The IBAN checksum fired on the shape of a value while ignoring its
+        label. ``Two letters, two digits, then 11 to 30 characters'' describes a
+        certificate number as well as a bank account, so the mod-97 key failed
+        on an authentic document --- and a single failed check imposed a score
+        floor of 50, turning a false positive into ``moderate risk''.
+
+  \item \fld{The count said one problem, the summary said none.}
+        The model writes its explanation before the deterministic checks run.
+        It could therefore report ``nothing found'' while those checks were
+        adding an anomaly to the list. Two true statements about two different
+        stages, printed as one contradiction.
+
+  \item \fld{An invoice number changed between page 1 and page 2 went unseen.}
+        The PDF renderer read \texttt{getPage(1)} only, while reporting the real
+        page count. The altered page never reached the model. The tester ranked
+        this the most important defect; the diagnosis confirms it, since no
+        amount of prompt tuning could have recovered a page that was never sent.
+
+  \item \fld{``Contact the email on the invoice to verify.''}
+        A forged document carries forged contact details. The prompt asked for
+        ``concrete verification steps'' without ever forbidding the document
+        from vouching for itself.
+\end{enumerate}
+
+\newpage
+
+%% ------------------------------------------------------ 3
+\heading{3.}{From feedback to shipped change}
+
+Every point raised was fixed and pushed, not queued. Commit \texttt{761c596} on
+\href{https://github.com/Hajji-ahmed/TrustDoc-AI}{github.com/Hajji-ahmed/TrustDoc-AI}.
+
+\vspace{3pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{40mm}
+                  >{\raggedright\arraybackslash}p{\dimexpr\linewidth-73mm}
+                  >{\raggedright\arraybackslash}p{22mm}@{}}
+\rowcolor{zebra}\textbf{\color{navy}Reported} & \textbf{\color{navy}Change made} &
+\textbf{\color{navy}Status} \\[3pt]
+Wrong rule applied to a date &
+The IBAN check now requires a label that names a bank account. An IBAN filed
+under a label that does not say so escapes the check --- accusing a genuine
+document costs more than missing one verification. & \shipped \\[3pt]
+\rowcolor{zebra}Summary contradicts detail &
+Each statement is attributed to its stage: visual analysis first, automatic
+checks second. The model's prose is kept, not rewritten. & \shipped \\[3pt]
+Two pages never compared &
+All pages are rendered and sent to the model in one request, each announced by
+its number. The prompt requires values repeated across pages to be compared. &
+\shipped \\[3pt]
+\rowcolor{zebra}Email alone is weak evidence &
+The prompt forbids any verification routed through the document's own contact
+details, and requires an independent source instead. & \shipped \\[3pt]
+Field types left implicit \emph{(tester's suggestion)} &
+The prompt now states which labels may be used for which value types, so the
+wrong deterministic check cannot be triggered downstream. & \shipped \\[3pt]
+\rowcolor{zebra}Cross-page detection on the tester's own file &
+Route contract verified on six cases; the two-page invoice has not been run
+again through the model. & \open \\
+\end{tabular}
+
+\vspace{5pt}
+\begin{note}{What this round actually taught}
+Extraction quality was never the weak point --- the tester confirmed it works,
+including on flattened scans. Every defect he found sat in the layer that
+decides \emph{what the reading means}: which rule applies to which field,
+whether pages are compared, whether the narrative matches the findings. A
+screening tool is not limited by what it can read, but by the discipline of what
+it concludes.
+\end{note}
+
+\vspace{4pt}
+\begin{badbox}{The correction that has not yet been proven}
+Points 1, 2 and 4 are verified by automated assertions. Point 3 --- the one the
+tester ranked highest --- is verified only up to the request contract: all pages
+now reach the model. Whether the model \emph{notices} the altered invoice number
+requires re-running his own two-page file. Until that is done, this defect is
+fixed in the pipeline and unproven in the result.
+\end{badbox}
+
+%% ------------------------------------------------------ 4
+% Le tableau à remplir et la synthèse ouvrent une page à eux : laissés à la
+% suite, ils coupaient la section 5 entre deux pages et laissaient la
+% checklist seule sur la dernière.
+\newpage
+\heading{4.}{Upcoming validations}
+
+Reserved for the companies, clients and professional testers contacted during
+the challenge. Only verified conversations and real feedback are recorded here.
+
+\vspace{3pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{30mm}
+                  >{\raggedright\arraybackslash}p{28mm}
+                  >{\raggedright\arraybackslash}p{\dimexpr\linewidth-111mm}
+                  >{\raggedright\arraybackslash}p{40mm}@{}}
+\rowcolor{zebra}\textbf{\color{navy}Company} & \textbf{\color{navy}Person / Role} &
+\textbf{\color{navy}Feedback / Learning} & \textbf{\color{navy}Change / Next action} \\[3pt]
+\rule{0pt}{16mm} & & & \\ \hline
+\rule{0pt}{16mm} & & & \\ \hline
+\rule{0pt}{16mm} & & & \\ \hline
+\rule{0pt}{16mm} & & & \\ \hline
+\rule{0pt}{16mm} & & & \\ \hline
+\end{tabular}
+
+%% ------------------------------------------------------ 5
+\heading{5.}{Summary and evidence checklist}
+
+\fld{Completed} One external company, one detailed tester, three documents, four
+defects found and four corrections shipped within the challenge window.
+
+\fld{Highest-priority correction} Detecting inconsistencies between pages of the
+same document --- shipped, awaiting retest on the tester's file.
+
+\fld{Next step} Re-run the altered two-page invoice, then widen testing to the
+companies listed above.
+
+\vspace{6pt}
+\begin{note}{Evidence checklist}
+\yes TecForge feedback captured, reproduced verbatim\\
+\yes Screenshot evidence included\\
+\yes Root cause identified in code for all four defects\\
+\yes Corrections implemented and pushed --- commit \texttt{761c596}\\
+\no Retest of the two-page invoice with the corrected prototype\\
+\no Additional companies, feedback and resulting changes
+\end{note}
+
+\vspace{4pt}
+{\footnotesize\color{muted}
+Live prototype: \href{https://trust-doc-ai.vercel.app}{trust-doc-ai.vercel.app}
+\hfill
+Source: \href{https://github.com/Hajji-ahmed/TrustDoc-AI}{github.com/Hajji-ahmed/TrustDoc-AI}}
+
+\end{document}
