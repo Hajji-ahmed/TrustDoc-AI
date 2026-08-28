@@ -16,7 +16,9 @@ import { RecommendationBanner, AnalysisExplanation } from '@/components/Analysis
 import type { PreparedDocument } from '@/lib/pdf'
 import type { AnalysisMode, AnalysisResult, AnalyzeError, AnalyzeResponse } from '@/lib/types'
 
-type Status = 'idle' | 'filePrepared' | 'analyzing' | 'success' | 'error'
+// Plus d'état « fichier prêt » : la préparation enchaîne directement sur
+// l'analyse, il n'existe aucun moment où un document attend un clic.
+type Status = 'idle' | 'analyzing' | 'success' | 'error'
 
 export default function DashboardPage() {
   const [status, setStatus] = useState<Status>('idle')
@@ -26,16 +28,19 @@ export default function DashboardPage() {
   const [errorMessage, setErrorMessage] = useState<string>('')
   const [activeElementId, setActiveElementId] = useState<string | null>(null)
 
+  // Le document déposé lance l'analyse immédiatement : plus de clic
+  // intermédiaire. Il est passé en argument à runAnalysis et non relu depuis
+  // l'état — setPreparedDocument ne prend effet qu'au rendu suivant, et la
+  // fonction lirait encore la valeur précédente, voire null au premier dépôt.
   function handlePrepared(doc: PreparedDocument) {
     setPreparedDocument(doc)
     setResult(null)
     setErrorMessage('')
     setActiveElementId(null)
-    setStatus('filePrepared')
+    void runAnalysis(doc)
   }
 
-  async function runAnalysis() {
-    if (!preparedDocument) return
+  async function runAnalysis(doc: PreparedDocument) {
     setStatus('analyzing')
     setErrorMessage('')
     setActiveElementId(null)
@@ -44,7 +49,7 @@ export default function DashboardPage() {
       const response = await fetch('/api/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pages: preparedDocument.pages.map((page) => page.dataUrl) }),
+        body: JSON.stringify({ pages: doc.pages.map((page) => page.dataUrl) }),
       })
 
       const payload: AnalyzeResponse | AnalyzeError = await response.json()
@@ -122,12 +127,17 @@ export default function DashboardPage() {
                       onHoverElement={setActiveElementId}
                     />
                   ) : null}
-                  <Button
-                    onClick={() => void runAnalysis()}
-                    disabled={!preparedDocument || status === 'analyzing'}
-                  >
-                    {status === 'analyzing' ? 'Analyse en cours…' : 'Analyser le document'}
-                  </Button>
+                  {/* Le bouton ne déclenche plus la première analyse, qui part
+                      au dépôt. Il ne sert plus qu'à en relancer une, et
+                      n'apparaît donc qu'une fois un document chargé. */}
+                  {preparedDocument ? (
+                    <Button
+                      onClick={() => void runAnalysis(preparedDocument)}
+                      disabled={status === 'analyzing'}
+                    >
+                      {status === 'analyzing' ? 'Analyse en cours…' : "Relancer l'analyse"}
+                    </Button>
+                  ) : null}
                 </div>
               </Card>
             </section>
@@ -139,7 +149,12 @@ export default function DashboardPage() {
                 </Card>
               ) : status === 'error' ? (
                 <Card>
-                  <ErrorState message={errorMessage} onRetry={() => void runAnalysis()} />
+                  <ErrorState
+                    message={errorMessage}
+                    onRetry={() => {
+                      if (preparedDocument) void runAnalysis(preparedDocument)
+                    }}
+                  />
                 </Card>
               ) : status === 'success' && result ? (
                 <div className="space-y-6">
