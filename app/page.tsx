@@ -1,11 +1,9 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Card, CardHeader } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Sidebar } from '@/components/Sidebar'
-import { StatsPanel } from '@/components/StatsPanel'
-import { EMPTY_STATS, type Stats } from '@/lib/stats-shape'
 import { EmptyState } from '@/components/states/EmptyState'
 import { LoadingState } from '@/components/states/LoadingState'
 import { ErrorState } from '@/components/states/ErrorState'
@@ -27,35 +25,6 @@ export default function DashboardPage() {
   const [mode, setMode] = useState<AnalysisMode | null>(null)
   const [errorMessage, setErrorMessage] = useState<string>('')
   const [activeElementId, setActiveElementId] = useState<string | null>(null)
-  const [stats, setStats] = useState<Stats>(EMPTY_STATS)
-  const [statsUnavailable, setStatsUnavailable] = useState(false)
-
-  // Les compteurs viennent du serveur : au montage pour retrouver le cumul
-  // existant, puis après chaque analyse pour refléter l'incrément.
-  //
-  // Un échec de lecture est signalé, jamais avalé : afficher « 0 » alors que
-  // le service n'a pas répondu revient à affirmer qu'aucun document n'a été
-  // analysé, ce qui est une information fausse et indiscernable de la vraie.
-  const refreshStats = useCallback(async () => {
-    try {
-      const response = await fetch('/api/stats', { cache: 'no-store' })
-      if (!response.ok) throw new Error(`réponse ${response.status}`)
-      setStats((await response.json()) as Stats)
-      setStatsUnavailable(false)
-    } catch {
-      setStatsUnavailable(true)
-    }
-  }, [])
-
-  // Le retour sur l'onglet relance la lecture : une page restée ouverte
-  // pendant un redémarrage du serveur se remet ainsi à jour d'elle-même,
-  // sans rechargement manuel.
-  useEffect(() => {
-    void refreshStats()
-    const onFocus = () => void refreshStats()
-    window.addEventListener('focus', onFocus)
-    return () => window.removeEventListener('focus', onFocus)
-  }, [refreshStats])
 
   function handlePrepared(doc: PreparedDocument) {
     setPreparedDocument(doc)
@@ -93,7 +62,6 @@ export default function DashboardPage() {
       setResult(payload.result)
       setMode(payload.mode)
       setStatus('success')
-      void refreshStats()
     } catch {
       setErrorMessage(
         "La connexion au service d'analyse a échoué. Vérifiez votre réseau puis réessayez.",
@@ -137,12 +105,6 @@ export default function DashboardPage() {
         </header>
 
         <main className="space-y-6 px-5 pb-10 sm:px-7">
-          <StatsPanel
-            stats={stats}
-            unavailable={statsUnavailable}
-            onRetry={() => void refreshStats()}
-          />
-
           {/* Trois paliers : une colonne sous 768 px, résultats sur deux colonnes
               entre 768 et 1280, document et résultats côte à côte au-delà. */}
           <div className="grid gap-6 xl:grid-cols-5">

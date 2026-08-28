@@ -3,7 +3,6 @@ import { analysisResultSchema } from '@/lib/schema'
 import { buildMockAnalysis } from '@/lib/mock'
 import { analyzeDocument, ModelOutputError } from '@/lib/openai'
 import { consolidateAnalysis } from '@/lib/validators'
-import { recordAnalysis } from '@/lib/stats'
 import { MAX_ANALYZED_PAGES } from '@/lib/pdf'
 import type {
   AnalysisMode,
@@ -23,16 +22,7 @@ function errorResponse(code: AnalyzeErrorCode, message: string, status: number) 
   return NextResponse.json(body, { status })
 }
 
-// Une analyse n'est comptabilisée qu'une fois le résultat validé : un appel en
-// échec ne doit pas gonfler les compteurs.
-async function respondWithResult(result: AnalysisResult, mode: AnalysisMode) {
-  await recordAnalysis({
-    at: new Date().toISOString(),
-    riskScore: result.riskScore,
-    riskLevel: result.riskLevel,
-    documentType: result.detectedDocumentType,
-    mode,
-  })
+function respondWithResult(result: AnalysisResult, mode: AnalysisMode) {
   const body: AnalyzeResponse = { mode, result }
   return NextResponse.json(body)
 }
