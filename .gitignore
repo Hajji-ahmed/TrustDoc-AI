@@ -7,6 +7,11 @@ next-env.d.ts
 *.tsbuildinfo
 public/pdf.worker.min.mjs
 
+# Compteurs du développement local. En production ils vivent dans Redis :
+# ce fichier n'a rien à faire dans le dépôt, et le déployer figerait des
+# chiffres de démonstration.
+data/stats.json
+
 # LaTeX
 deliverables/*.aux
 deliverables/*.log
