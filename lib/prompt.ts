@@ -37,6 +37,8 @@ Pour tout le reste, emploie un libellé descriptif et sans ambiguïté : « Num�
 
 Reporte la valeur telle qu'elle est écrite sur le document, sans la reformater.
 
+Chaque champ porte le numéro de la page où tu l'as lu. Un champ qui apparaît sur plusieurs pages — numéro de facture, référence, titulaire, identifiants de l'émetteur — doit être extrait une fois par page, avec sa valeur telle qu'elle figure sur cette page-là. Ne fusionne jamais deux occurrences en une seule entrée : c'est précisément la comparaison de ces valeurs entre elles qui révèle une incohérence entre pages.
+
 CALIBRATION DU SCORE
 
 - 0-33 : aucune anomalie significative, ou irrégularités attribuables à la qualité du scan.

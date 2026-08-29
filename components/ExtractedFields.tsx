@@ -8,6 +8,11 @@ function confidenceLabel(confidence: number) {
 }
 
 export function ExtractedFields({ fields }: { fields: ExtractedField[] }) {
+  // Un même libellé peut désormais apparaître sur plusieurs pages : la page
+  // n'est affichée que si le document en compte plus d'une, sinon elle
+  // n'apprend rien.
+  const showPage = new Set(fields.map((field) => field.page)).size > 1
+
   return (
     <Card accent="olive">
       <CardHeader
@@ -23,9 +28,16 @@ export function ExtractedFields({ fields }: { fields: ExtractedField[] }) {
         </p>
       ) : (
         <ul className="divide-y divide-[var(--color-line)]">
-          {fields.map((field) => (
-            <li key={field.label} className="px-5 py-3">
-              <p className="text-xs text-[var(--color-ink-muted)]">{field.label}</p>
+          {/* La clé porte l'index : le libellé n'est plus unique dès qu'un champ
+              est lu sur plusieurs pages. */}
+          {fields.map((field, index) => (
+            <li key={`${field.label}-${field.page}-${index}`} className="px-5 py-3">
+              <p className="text-xs text-[var(--color-ink-muted)]">
+                {field.label}
+                {showPage ? (
+                  <span className="ml-1.5 opacity-70">— page {field.page}</span>
+                ) : null}
+              </p>
               <p className="mt-0.5 break-words text-sm font-medium">{field.value}</p>
               <p className="mt-1 text-[11px] text-[var(--color-ink-muted)]">
                 {confidenceLabel(field.confidence)} — {Math.round(field.confidence * 100)} %

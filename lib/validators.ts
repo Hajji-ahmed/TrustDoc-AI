@@ -9,10 +9,29 @@ import type { AnalysisResult, ExtractedField, SuspiciousElement } from '@/lib/ty
  * contrôle de façon fiable — c'est le rôle de ce module. Chaque fonction ici
  * est pure et son résultat est vérifiable : aucune interprétation.
  *
- * Toutes les anomalies produites sont de sévérité MEDIUM et formulées comme
- * des points à vérifier, jamais comme des accusations : une erreur de lecture
- * du modèle produirait le même symptôme qu'une vraie falsification.
+ * Les anomalies sont toujours formulées comme des points à vérifier, jamais
+ * comme des accusations. Elles se répartissent en deux natures, déclarées une
+ * seule fois dans le registre CHECKS en bas de fichier :
+ *
+ * - « fait » : un constat de calendrier ou d'arithmétique qu'un document
+ *   authentique ne peut pas porter — une période qui finit avant de commencer,
+ *   un 31 février, une somme qui ne tombe pas juste. Sévérité haute, et le
+ *   score plancher correspondant.
+ * - « forme » : un format ou une clé de contrôle qui échoue. Un chiffre mal lu
+ *   produit exactement le même symptôme, donc sévérité modérée et plancher
+ *   plus bas. C'est de cette catégorie qu'est venu le faux positif sur un vrai
+ *   certificat ISO.
  */
+
+type FindingKind = 'fact' | 'format'
+
+/** Ce qu'un contrôle produit : la sévérité est décidée par le registre. */
+type RawFinding = Omit<SuspiciousElement, 'severity'>
+
+interface Finding {
+  element: SuspiciousElement
+  kind: FindingKind
+}
 
 // ---------------------------------------------------------------- utilitaires
 
@@ -172,7 +191,7 @@ export function isValidIce(raw: string): boolean {
 
 // ------------------------------------------------------------------ contrôles
 
-function checkIce(fields: ExtractedField[]): SuspiciousElement[] {
+function checkIce(fields: ExtractedField[]): RawFinding[] {
   return findFields(fields, /\bice\b/)
     .filter((field) => /\d/.test(field.value))
     .filter((field) => !isValidIce(field.value))
@@ -185,13 +204,12 @@ function checkIce(fields: ExtractedField[]): SuspiciousElement[] {
           `Un ICE marocain comporte exactement 15 chiffres. La valeur lue « ${field.value} » ` +
           `en contient ${digits}. À vérifier auprès de l'émetteur : il peut s'agir d'un ` +
           `identifiant invalide comme d'une erreur de lecture du document.`,
-        severity: 'MEDIUM' as const,
         category: 'COHERENCE_DONNEES' as const,
       }
     })
 }
 
-function checkVatArithmetic(fields: ExtractedField[]): SuspiciousElement[] {
+function checkVatArithmetic(fields: ExtractedField[]): RawFinding[] {
   const ht = findField(fields, /total\s*ht|montant\s*ht|base\s*(hors\s*taxe|ht)/)
   const vat = findField(fields, /\btva\b|taxe\s*sur\s*la\s*valeur/)
   const ttc = findField(fields, /total\s*ttc|montant\s*ttc|total\s*a\s*payer|net\s*a\s*payer/)
@@ -216,7 +234,6 @@ function checkVatArithmetic(fields: ExtractedField[]): SuspiciousElement[] {
         `donne ${expected.toLocaleString('fr-FR')}, alors que le total indiqué est ` +
         `${ttcValue.toLocaleString('fr-FR')}. Écart de ${gap.toLocaleString('fr-FR')}. ` +
         `Vérifier les trois montants sur le document.`,
-      severity: 'MEDIUM' as const,
       category: 'COHERENCE_DONNEES' as const,
     },
   ]
@@ -231,7 +248,7 @@ const VALIDITY_LABEL = /validite|expiration|\bvalable\b/
 
 const DAY_MS = 24 * 60 * 60 * 1000
 
-function checkImpossibleDates(fields: ExtractedField[]): SuspiciousElement[] {
+function checkImpossibleDates(fields: ExtractedField[]): RawFinding[] {
   return findFields(fields, DATE_LABEL)
     .filter((field) => hasImpossibleDate(field.value))
     .map((field, index) => ({
@@ -241,13 +258,12 @@ function checkImpossibleDates(fields: ExtractedField[]): SuspiciousElement[] {
         `La valeur lue « ${field.value} » ne correspond à aucun jour du calendrier. ` +
         `Un document authentique ne porte pas une telle date. À confronter au ` +
         `document : un chiffre mal lu produirait le même symptôme.`,
-      severity: 'MEDIUM' as const,
       category: 'COHERENCE_DONNEES' as const,
     }))
 }
 
 /** Une période dont la fin précède le début ne peut pas exister. */
-function checkPeriodOrder(fields: ExtractedField[]): SuspiciousElement[] {
+function checkPeriodOrder(fields: ExtractedField[]): RawFinding[] {
   return findFields(fields, DATE_LABEL)
     .map((field) => ({ field, dates: parseDates(field.value) }))
     .filter(({ dates }) => dates.length >= 2)
@@ -259,13 +275,12 @@ function checkPeriodOrder(fields: ExtractedField[]): SuspiciousElement[] {
         `La valeur lue « ${field.value} » décrit une période dont la fin précède ` +
         `le début. Cette combinaison est impossible sur un document authentique. ` +
         `Vérifier les deux dates sur le document.`,
-      severity: 'MEDIUM' as const,
       category: 'COHERENCE_DONNEES' as const,
     }))
 }
 
 /** Un document ne peut pas cesser d'être valable avant d'avoir été émis. */
-function checkValidityBeforeIssue(fields: ExtractedField[]): SuspiciousElement[] {
+function checkValidityBeforeIssue(fields: ExtractedField[]): RawFinding[] {
   const issued = findField(fields, ISSUE_LABEL)
   const validity = findField(fields, VALIDITY_LABEL)
   if (!issued || !validity) return []
@@ -286,14 +301,13 @@ function checkValidityBeforeIssue(fields: ExtractedField[]): SuspiciousElement[]
         `Le document est daté du ${issued.value} et annonce une validité ` +
         `« ${validity.value} », soit une expiration antérieure à sa propre émission. ` +
         `Vérifier les deux champs sur le document.`,
-      severity: 'MEDIUM' as const,
       category: 'COHERENCE_DONNEES' as const,
     },
   ]
 }
 
 /** Un document daté du futur n'a pas pu être émis. */
-function checkFutureIssue(fields: ExtractedField[], now: Date): SuspiciousElement[] {
+function checkFutureIssue(fields: ExtractedField[], now: Date): RawFinding[] {
   const issued = findField(fields, ISSUE_LABEL)
   if (!issued) return []
 
@@ -311,7 +325,6 @@ function checkFutureIssue(fields: ExtractedField[], now: Date): SuspiciousElemen
         `Le document annonce une émission au ${issued.value}, soit une date à venir. ` +
         `Un document ne peut pas avoir été émis dans le futur. Vérifier la date sur ` +
         `le document.`,
-      severity: 'MEDIUM' as const,
       category: 'COHERENCE_DONNEES' as const,
     },
   ]
@@ -324,7 +337,7 @@ function checkFutureIssue(fields: ExtractedField[], now: Date): SuspiciousElemen
 const LEGAL_VAT_RATES = [0, 7, 10, 14, 20]
 const VAT_RATE_TOLERANCE = 0.5
 
-function checkVatRate(fields: ExtractedField[]): SuspiciousElement[] {
+function checkVatRate(fields: ExtractedField[]): RawFinding[] {
   const ht = findField(fields, /total\s*ht|montant\s*ht|base\s*(hors\s*taxe|ht)/)
   const vat = findField(fields, /\btva\b|taxe\s*sur\s*la\s*valeur/)
   if (!ht || !vat) return []
@@ -348,13 +361,12 @@ function checkVatRate(fields: ExtractedField[]): SuspiciousElement[] {
           maximumFractionDigits: 2,
         })} %, qui ne correspond à aucun taux en vigueur (0, 7, 10, 14 ou 20 %). ` +
         `Vérifier les deux montants sur le document.`,
-      severity: 'MEDIUM' as const,
       category: 'COHERENCE_DONNEES' as const,
     },
   ]
 }
 
-function checkDates(fields: ExtractedField[]): SuspiciousElement[] {
+function checkDates(fields: ExtractedField[]): RawFinding[] {
   const issued = findField(fields, /date.*(factur|emission|edition)|date\s*du\s*document/)
   const due = findField(fields, /echeance|date\s*limite|date\s*de\s*paiement/)
 
@@ -373,7 +385,6 @@ function checkDates(fields: ExtractedField[]): SuspiciousElement[] {
         `Le document est daté du ${issued.value} et porte une échéance au ${due.value}, ` +
         `soit une échéance antérieure à son émission. Cette combinaison est impossible ` +
         `sur un document authentique.`,
-      severity: 'MEDIUM' as const,
       category: 'COHERENCE_DONNEES' as const,
     },
   ]
@@ -399,7 +410,55 @@ function looksLikeIban(value: string): boolean {
  */
 const BANK_ACCOUNT_LABEL = /\biban\b|\brib\b|bancaire|\bbanque\b|\bcompte\b/
 
-function checkIban(fields: ExtractedField[]): SuspiciousElement[] {
+/**
+ * Libellés dont la valeur doit être la même sur toutes les pages d'un document.
+ *
+ * La liste est volontairement courte. « Date » ou « Total » peuvent
+ * légitimement différer d'une page à l'autre ; un numéro de facture, non.
+ * Comparer tout libellé répété rejouerait exactement l'erreur du contrôle IBAN
+ * sur le certificat ISO : signaler une variation normale comme une anomalie.
+ */
+const CONSTANT_ACROSS_PAGES =
+  /numero\s*(de\s*)?(facture|dossier|certificat|reference|compte)|^reference\b|titulaire|beneficiaire|\bice\b|\biban\b|\brib\b|emetteur/
+
+/** Réduit une valeur à ce qui doit être comparé : ni casse, ni accents, ni ponctuation. */
+function comparable(raw: string): string {
+  return normalize(raw).replace(/[^a-z0-9]/g, '')
+}
+
+function checkCrossPageConsistency(fields: ExtractedField[]): RawFinding[] {
+  const groups = new Map<string, ExtractedField[]>()
+  for (const field of findFields(fields, CONSTANT_ACROSS_PAGES)) {
+    const key = normalize(field.label)
+    groups.set(key, [...(groups.get(key) ?? []), field])
+  }
+
+  const findings: RawFinding[] = []
+  for (const group of groups.values()) {
+    // Deux occurrences sur la même page ne prouvent rien : un document peut
+    // répéter un champ. C'est la divergence entre pages qui est anormale.
+    if (new Set(group.map((field) => field.page)).size < 2) continue
+    if (new Set(group.map((field) => comparable(field.value))).size < 2) continue
+
+    const seen = group
+      .map((field) => `« ${field.value} » page ${field.page}`)
+      .join(', ')
+
+    findings.push({
+      id: `check-crosspage-${findings.length + 1}`,
+      title: `Valeur différente d'une page à l'autre — ${group[0].label}`,
+      description:
+        `Ce champ devrait porter la même valeur sur tout le document. Les pages ` +
+        `analysées donnent : ${seen}. Un identifiant qui change en cours de ` +
+        `document est une incohérence majeure. Confronter les pages entre elles.`,
+      category: 'COHERENCE_DONNEES' as const,
+    })
+  }
+
+  return findings
+}
+
+function checkIban(fields: ExtractedField[]): RawFinding[] {
   return findFields(fields, BANK_ACCOUNT_LABEL)
     .filter((field) => looksLikeIban(field.value))
     .filter((field) => !isValidIban(field.value))
@@ -410,9 +469,32 @@ function checkIban(fields: ExtractedField[]): SuspiciousElement[] {
         `La valeur lue « ${field.value} » ne satisfait pas la clé de contrôle mod-97 de la ` +
         `norme IBAN. Un IBAN authentique la vérifie toujours. À confronter au document : ` +
         `un seul chiffre mal lu suffit à faire échouer ce contrôle.`,
-      severity: 'MEDIUM' as const,
       category: 'COHERENCE_DONNEES' as const,
     }))
+}
+
+// Registre des contrôles. C'est l'unique endroit où se décide la nature d'un
+// constat — et donc sa sévérité comme son poids dans le score.
+const CHECKS: { kind: FindingKind; run: (fields: ExtractedField[], now: Date) => RawFinding[] }[] = [
+  { kind: 'format', run: (fields) => checkIce(fields) },
+  { kind: 'format', run: (fields) => checkIban(fields) },
+  { kind: 'format', run: (fields) => checkVatRate(fields) },
+  { kind: 'fact', run: (fields) => checkVatArithmetic(fields) },
+  { kind: 'fact', run: (fields) => checkImpossibleDates(fields) },
+  { kind: 'fact', run: (fields) => checkPeriodOrder(fields) },
+  { kind: 'fact', run: (fields) => checkValidityBeforeIssue(fields) },
+  { kind: 'fact', run: (fields, now) => checkFutureIssue(fields, now) },
+  { kind: 'fact', run: (fields) => checkDates(fields) },
+  { kind: 'fact', run: (fields) => checkCrossPageConsistency(fields) },
+]
+
+function collectFindings(fields: ExtractedField[], now: Date): Finding[] {
+  return CHECKS.flatMap(({ kind, run }) =>
+    run(fields, now).map((raw) => ({
+      kind,
+      element: { ...raw, severity: kind === 'fact' ? ('HIGH' as const) : ('MEDIUM' as const) },
+    })),
+  )
 }
 
 /**
@@ -425,17 +507,25 @@ export function runDeterministicChecks(
   fields: ExtractedField[],
   now: Date = new Date(),
 ): SuspiciousElement[] {
-  return [
-    ...checkIce(fields),
-    ...checkVatArithmetic(fields),
-    ...checkVatRate(fields),
-    ...checkImpossibleDates(fields),
-    ...checkPeriodOrder(fields),
-    ...checkValidityBeforeIssue(fields),
-    ...checkFutureIssue(fields, now),
-    ...checkDates(fields),
-    ...checkIban(fields),
-  ]
+  return collectFindings(fields, now).map((finding) => finding.element)
+}
+
+/**
+ * Score plancher imposé par les contrôles.
+ *
+ * Un fait suffit à faire basculer en risque élevé : un document dont la période
+ * de validité se termine avant de commencer n'est pas « à surveiller », il est
+ * incohérent. Les constats de forme restent plus bas, parce qu'un chiffre mal
+ * lu suffit à les déclencher.
+ */
+function scoreFloor(findings: Finding[]): number {
+  const facts = findings.filter((finding) => finding.kind === 'fact').length
+  const formats = findings.length - facts
+
+  let floor = 0
+  if (formats > 0) floor = formats >= 2 ? 70 : 50
+  if (facts > 0) floor = Math.max(floor, facts >= 2 ? 90 : 75)
+  return floor
 }
 
 // ------------------------------------------------------------- consolidation
@@ -472,15 +562,17 @@ function summarizeChecks(findings: SuspiciousElement[]): string {
  * - le texte d'analyse ne peut pas contredire la liste des anomalies.
  */
 export function consolidateAnalysis(result: AnalysisResult): AnalysisResult {
-  const findings = runDeterministicChecks(result.extractedInformation)
+  const collected = collectFindings(result.extractedInformation, new Date())
+  const findings = collected.map((finding) => finding.element)
 
   let riskScore = result.riskScore
   let recommendation = result.recommendation
 
   if (findings.length > 0) {
     // Un contrôle en échec impose un plancher : « risque faible » devient
-    // impossible dès qu'une vérification objective échoue.
-    riskScore = Math.max(riskScore, findings.length >= 2 ? 70 : 50)
+    // impossible dès qu'une vérification objective échoue. Le plancher dépend
+    // de la nature du constat, pas seulement de leur nombre.
+    riskScore = Math.max(riskScore, scoreFloor(collected))
 
     if (recommendation.action === 'ACCEPTER') {
       recommendation = { ...recommendation, action: 'VERIFICATION_MANUELLE' }

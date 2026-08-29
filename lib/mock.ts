@@ -6,20 +6,20 @@ export function buildMockAnalysis(): AnalysisResult {
     riskLevel: 'HIGH',
     detectedDocumentType: 'Relevé bancaire mensuel',
     extractedInformation: [
-      { label: 'Titulaire du compte', value: 'Karim El Mansouri', confidence: 0.97 },
+      { label: 'Titulaire du compte', value: 'Karim El Mansouri', confidence: 0.97, page: 1 },
       {
         label: 'Numéro de compte',
         value: 'FR76 3000 4008 2800 0123 4567 890',
-        confidence: 0.92,
+        confidence: 0.92, page: 1,
       },
       {
         label: 'Établissement',
         value: 'Banque Atlantique — Agence Casablanca Centre',
-        confidence: 0.95,
+        confidence: 0.95, page: 1,
       },
-      { label: 'Période', value: '01/03/2026 — 31/03/2026', confidence: 0.99 },
-      { label: 'Solde de clôture', value: '48 250,00 MAD', confidence: 0.71 },
-      { label: "Date d'émission", value: '02/04/2026', confidence: 0.88 },
+      { label: 'Période', value: '01/03/2026 — 31/03/2026', confidence: 0.99, page: 1 },
+      { label: 'Solde de clôture', value: '48 250,00 MAD', confidence: 0.71, page: 1 },
+      { label: "Date d'émission", value: '02/04/2026', confidence: 0.88, page: 1 },
     ],
     suspiciousElements: [
       {

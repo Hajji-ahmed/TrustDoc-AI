@@ -13,6 +13,9 @@ export interface ExtractedField {
   label: string
   value: string
   confidence: number
+  // Page où le champ a été lu, numérotée à partir de 1. C'est elle qui permet
+  // de confronter entre elles les valeurs d'un même champ sur plusieurs pages.
+  page: number
 }
 
 export interface SuspiciousElement {

@@ -20,6 +20,7 @@ export const analysisResultSchema = z.object({
       label: z.string().min(1),
       value: z.string(),
       confidence: z.number().min(0).max(1),
+      page: z.number().int().min(1),
     }),
   ),
   suspiciousElements: z.array(
@@ -75,11 +76,16 @@ export const ANALYSIS_JSON_SCHEMA = {
       items: {
         type: 'object',
         additionalProperties: false,
-        required: ['label', 'value', 'confidence'],
+        required: ['label', 'value', 'confidence', 'page'],
         properties: {
           label: { type: 'string', description: 'Nom du champ, en français.' },
           value: { type: 'string' },
           confidence: { type: 'number', description: 'Confiance de lecture entre 0 et 1.' },
+          page: {
+            type: 'integer',
+            description:
+              'Numéro de la page où le champ est lu, à partir de 1, tel qu’annoncé avant chaque image.',
+          },
         },
       },
     },
