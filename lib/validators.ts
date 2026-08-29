@@ -596,6 +596,18 @@ export function consolidateAnalysis(result: AnalysisResult): AnalysisResult {
     riskScore = Math.max(riskScore, 34)
   }
 
+  // Chaque point du score doit être traçable à un constat affiché. Un modèle
+  // renvoyant 20 sur un document où ni lui ni les contrôles n'ont rien trouvé
+  // produit un chiffre que le relecteur ne peut ni vérifier ni expliquer.
+  //
+  // La remise à zéro exige que le verdict soit lui aussi « acceptable » : si le
+  // modèle recommande une vérification sans avoir formalisé d'anomalie, son
+  // avertissement est conservé par les planchers ci-dessus.
+  const nothingFound = findings.length === 0 && result.suspiciousElements.length === 0
+  if (nothingFound && recommendation.action === 'ACCEPTER') {
+    riskScore = 0
+  }
+
   return {
     ...result,
     riskScore,
