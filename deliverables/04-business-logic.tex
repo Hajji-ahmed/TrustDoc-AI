@@ -35,11 +35,7 @@
 
 \pagestyle{empty}
 \setlength{\parindent}{0pt}
-% Le document tient sur deux pages : l'interligne et les espaces entre sections
-% sont desserrés en conséquence, plutôt que de laisser une page dense et une
-% page vide.
-\setlength{\parskip}{5pt}
-\linespread{1.06}\selectfont
+\setlength{\parskip}{4pt}
 \color{ink}
 
 \setlist[itemize]{leftmargin=13pt,itemsep=2pt,topsep=2pt,parsep=0pt}
@@ -95,7 +91,49 @@ direct financial loss on a miss, and a verification step that already exists ---
 so the product replaces a manual task rather than creating a new one.
 
 %% ------------------------------------------------------ 2
-\heading{2.}{Value --- what is actually being bought}
+\heading{2.}{What two external reviews changed}
+
+The prototype was put in front of two people during the challenge, chosen for
+opposite vantage points: an HR practitioner who verifies documents himself, and
+a company director who would sign for the tool. Deliverable 03 records the
+detail; what follows is only what bears on the business.
+
+\vspace{2pt}
+\fld{The user tested the mechanism.} Reading and extraction were judged reliable,
+including on a flattened scan. The objection was not that the tool fails to see
+--- it was that the score could not yet be trusted. For a screening product, that
+is the whole sale.
+
+\fld{The buyer named the criterion.} Unprompted, the director identified the
+central challenge as \emph{demonstrating the reliability of the results, and
+keeping anomaly detection clearly distinct from proof of authenticity}. He was
+describing the product's founding constraint without having been told it.
+
+\vspace{4pt}
+\begin{note}{The beachhead was not confirmed --- it was redirected}
+Section 1 assumes lending and leasing. The one director asked pointed instead to
+\textbf{public administrations, educational institutions and companies}, on his
+own initiative.
+
+\vspace{3pt}
+One opinion does not move a beachhead: a single data point cannot outweigh the
+reasoning behind lending, which rests on direct financial loss per miss. But it
+is the only segment signal the challenge produced from someone evaluating the
+tool for his own organisation, and it is recorded here rather than discarded for
+disagreeing with the hypothesis. It is the first question for the ten interviews
+in week 1.
+\end{note}
+
+\vspace{4pt}
+\fld{What this reorders.} Both reviewers converged on the same purchase
+criterion, and it is not detection coverage. It is whether a flag can be
+trusted, and whether the product is honest about what it does not prove. That
+puts the audit trail and the calibration evidence ahead of new detection
+categories on the roadmap --- a ranking neither reviewer was asked about, and
+both implied.
+
+%% ------------------------------------------------------ 3
+\heading{3.}{Value --- what is actually being bought}
 
 \begin{minipage}[t]{0.485\linewidth}
 \begin{goodbox}{Measurable}
@@ -115,8 +153,8 @@ The second column is deliberately empty of numbers. Quantifying the value
 before speaking to a single reviewer would produce a convincing figure and a
 worthless one.
 
-%% ------------------------------------------------------ 3
-\heading{3.}{Business model}
+%% ------------------------------------------------------ 4
+\heading{4.}{Business model}
 
 \vspace{2pt}
 % Les 80mm retranchés couvrent les deux colonnes fixes (71mm) et les quatre
@@ -139,11 +177,8 @@ falls as models get cheaper. Gross margin is therefore high and predictable;
 the real cost centres are sales and the trust-building work, not compute.
 \end{note}
 
-%% ------------------------------------------------------ 4
-% Coupure au changement de sujet : clients, valeur et modèle d'un côté, marché
-% et exécution de l'autre. Les deux pages restent ainsi cohérentes seules.
-\newpage
-\heading{4.}{Market --- sized bottom-up, not asserted}
+%% ------------------------------------------------------ 5
+\heading{5.}{Market --- sized bottom-up, not asserted}
 
 Rather than quote a market figure, the opportunity is expressed as a formula
 whose inputs are verifiable one by one:
@@ -164,8 +199,8 @@ $\rightarrow$ education $\rightarrow$ public administration. Same engine, new
 document families and new business rules --- which is also the natural order of
 increasing sales-cycle length.
 
-%% ------------------------------------------------------ 5
-\heading{5.}{Next 30 days}
+%% ------------------------------------------------------ 6
+\heading{6.}{Next 30 days}
 
 \begin{tabular}{@{}>{\raggedright\arraybackslash}p{16mm}
                   >{\raggedright\arraybackslash}p{\dimexpr\linewidth-21mm}@{}}
