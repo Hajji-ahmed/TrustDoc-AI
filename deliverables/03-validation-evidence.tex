@@ -288,18 +288,88 @@ buyers will judge the product on.
 \end{note}
 
 \vspace{4pt}
-\begin{badbox}{Test designed better than ours --- and not yet scored}
-Document A and Document B differ by one controlled variable: an inconsistency
-between issue date and validity period. That is a cleaner experiment than
-anything run in-house, because it isolates a single failure mode and provides
-its own control.
+\heading{4.1}{The test design --- one controlled variable}
+
+Both documents are byte-for-byte identical except for the validity window. That
+is a cleaner experiment than anything run in-house: it isolates a single failure
+mode and ships with its own control.
 
 \vspace{3pt}
-The two result screenshots did not render in the received message, so the
-outcome of this A/B test is \textbf{not documented here}. Reporting it from
-memory or inference would defeat the purpose of an evidence document. The
-result is being requested from the reviewer, and the pair will be re-run against
-the corrected prototype in either case.
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{34mm}
+                  >{\raggedright\arraybackslash}p{\dimexpr(\linewidth-46mm)/2}
+                  >{\raggedright\arraybackslash}p{\dimexpr(\linewidth-46mm)/2}@{}}
+\rowcolor{zebra}\textbf{\color{navy}Field} &
+\textbf{\color{navy}Document A --- control} &
+\textbf{\color{navy}Document B --- altered} \\[3pt]
+Issue date & 28 August 2026 & 28 August 2026 \\[3pt]
+\rowcolor{zebra}Period covered & 1 Jan 2026 to 31 Dec 2026 &
+1 Jan 2026 to \textbf{\color{bad}31 Dec 2025} \\[3pt]
+Validity & until 31 Dec 2026 & until \textbf{\color{bad}31 Dec 2025} \\[3pt]
+\rowcolor{zebra}Everything else & \multicolumn{2}{@{}l@{}}{Identical --- reference,
+identifier, issuer, signature, verification reference} \\
+\end{tabular}
+
+\vspace{3pt}
+The planted defect is a period that ends before it begins, on a document issued
+after both dates. It is obvious to a human and invisible to any check that reads
+fields one at a time.
+
+%% ------------------------------------------------------ 4.2
+% Le résultat ouvre une page : laissé à la suite, son titre restait seul en
+% bas de la page précédente, séparé de l'encadré qu'il annonce.
+\newpage
+\heading{4.2}{The result --- the planted defect was caught}
+
+\vspace{2pt}
+\begin{goodbox}{Document B, scored by the deployed prototype}
+\fld{Score} 34/100 --- moderate risk. \fld{Type} Attestation administrative,
+correctly identified.
+
+\vspace{3pt}
+\fld{Anomaly} One, and only one: \emph{``La période concernée commence en 2026
+mais termine en 2025, ce qui est chronologiquement impossible.''} Classified
+under data coherence, moderate severity, and drawn as a numbered region on the
+document itself.
+
+\vspace{3pt}
+\fld{Recommendation} Manual verification required --- confirm the details with
+the issuer \emph{through alternative official channels}, and compare against
+other documents.
+\end{goodbox}
+
+\shot{assets/test-managov-b.png}{Document B analysed by the deployed prototype: the falsified validity window is isolated, named and localised.}
+
+\vspace{2pt}
+\begin{note}{What this result confirms beyond the detection itself}
+Two of the corrections made after the first validation are visible in this
+output, independently produced by a second reviewer who knew nothing of them.
+
+\vspace{3pt}
+\textbf{The narrative no longer contradicts the findings.} The explanation reads
+\emph{``Analyse visuelle: …''} then \emph{``Contrôles automatiques: aucun écart
+relevé…''}. Each statement is attributed to its stage, and both are true at
+once: the model saw the date problem, the deterministic checks correctly found
+nothing in their own scope.
+
+\vspace{3pt}
+\textbf{The verification step no longer routes through the document.} The
+recommendation names \emph{alternative official channels} rather than the
+contact details printed on the page --- the precise flaw reported by the first
+reviewer.
+\end{note}
+
+\vspace{4pt}
+\begin{badbox}{The control was not scored}
+Document A exists to answer the question the reviewer wrote at the top of both
+files: \emph{``Vérifier que DocShield AI ne génère pas de faux positifs.''}
+It was uploaded, but the captured screen shows it before the analysis was run,
+so \textbf{no result is recorded for the control}.
+
+\vspace{3pt}
+Detection on B is therefore established; the absence of a false positive on A is
+not. A test that only ever fires proves nothing on its own --- the control is
+what separates a detector from an alarm that is always on. Running Document A is
+the single most useful next step in this dossier.
 \end{badbox}
 
 \newpage
@@ -336,11 +406,12 @@ Managov &
 Abdelkrim Zrouli\newline \textit{Director} &
 Concept and interface judged relevant for administrations, schools and
 companies. Central challenge named: demonstrating the reliability of results,
-and keeping anomaly detection clearly distinct from proof of authenticity. Ran
-a matched pair of synthetic documents differing by one falsified date. &
-Positioning confirmed and kept explicit in the interface. Next: obtain the two
-result screenshots, then re-run the pair against the corrected prototype.
-\\ \hline
+and keeping anomaly detection clearly distinct from proof of authenticity. Ran a
+matched pair of synthetic documents differing by one falsified validity window;
+the altered document was correctly flagged. &
+Positioning confirmed and kept explicit in the interface. Detection validated on
+the altered document. Next: run the control document to confirm no false
+positive is raised. \\ \hline
 \rule{0pt}{16mm} & & & \\ \hline
 \rule{0pt}{16mm} & & & \\ \hline
 \rule{0pt}{16mm} & & & \\ \hline
@@ -350,18 +421,24 @@ result screenshots, then re-run the pair against the corrected prototype.
 \heading{6.}{Summary and evidence checklist}
 
 \fld{Completed} Two external companies, two reviewers --- one HR practitioner
-and one director --- five documents tested, four defects found and four
+and one director --- seven documents tested, four defects found and four
 corrections shipped within the challenge window.
 
 \fld{Confirmed from outside} The boundary the product was built on --- report
 anomalies, never certify authenticity --- was independently named as the central
-challenge by the second reviewer, who had not been told it.
+challenge by the second reviewer, who had not been told it. Two of the
+corrections made after the first validation are visible in his test output.
 
-\fld{Highest-priority correction} Detecting inconsistencies between pages of the
-same document --- shipped, awaiting retest on the reviewers' own files.
+\fld{Detection demonstrated} On a falsification designed by a third party, the
+prototype isolated the planted defect, named it correctly and localised it on
+the document.
 
-\fld{Next step} Obtain the Managov result screenshots, re-run both the altered
-two-page invoice and the A/B pair, then widen testing further.
+\fld{Not yet demonstrated} The absence of false positives. The control document
+of that same test was never scored, and the two-page invoice from the first
+validation has not been re-run.
+
+\fld{Next step} Run Document A, the control. It is the cheapest test remaining
+and the only one that turns the current evidence into a complete result.
 
 \vspace{6pt}
 \begin{note}{Evidence checklist}
@@ -369,8 +446,9 @@ two-page invoice and the A/B pair, then widen testing further.
 \yes Both messages captured and reproduced verbatim\\
 \yes Root cause identified in code for all four defects\\
 \yes Corrections implemented and deployed, published in the project repository\\
-\no Managov A/B test results --- screenshots did not render in the message\\
-\no Retest of the two-page invoice and of the A/B pair with the corrected prototype
+\yes Detection confirmed on a third party's falsified document\\
+\no Control document not scored --- absence of false positives unverified\\
+\no Retest of the two-page invoice with the corrected prototype
 \end{note}
 
 \vspace{4pt}
