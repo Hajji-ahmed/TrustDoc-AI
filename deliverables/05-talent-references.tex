@@ -6,7 +6,7 @@
 
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
-\usepackage[margin=16mm,top=14mm,bottom=12mm]{geometry}
+\usepackage[margin=15mm,top=12mm,bottom=10mm]{geometry}
 
 \usepackage{charter}
 \usepackage[activate={true,nocompatibility},final,tracking=true,
@@ -27,7 +27,7 @@
 
 \pagestyle{empty}
 \setlength{\parindent}{0pt}
-\setlength{\parskip}{3pt}
+\setlength{\parskip}{2pt}
 \color{ink}
 
 %% ------------------------------------------------------ encadrés à onglet
@@ -75,13 +75,14 @@ I did not pick the strongest engineers I know. I picked the three people who
 close the three weaknesses the 72-hour build actually exposed.
 
 \vspace{2pt}
-\begin{gapbox}{Gaps the prototype revealed}
-\fld{Usability} Demo results were once mistaken for a real analysis because the
-warning was not visible enough. A screening tool that misleads its own user fails.
+\begin{gapbox}{Gaps the prototype revealed --- each one observed, not imagined}
+\fld{Usability} A qualified engineer read an absence of detected anomalies as
+the document being \emph{``certified and trustworthy''}. The analysis was
+correct; the reading was not. A screening tool that misleads its own user fails.
 
-\fld{Fraud expertise} An AI-generated invoice scored low risk. Knowing which
-fraud patterns matter, and what a false positive costs, is domain knowledge I do
-not have.
+\fld{Fraud expertise} An AI-generated invoice scored low risk, and a coherent
+fabrication still passes every check. Knowing which fraud patterns matter, and
+what a false positive costs against a miss, is domain knowledge I do not have.
 
 \fld{Production} No rate limiting, a payload ceiling on the host, no
 persistence. The prototype runs; it is not yet a service.
@@ -90,15 +91,17 @@ persistence. The prototype runs; it is not yet a service.
 %% ------------------------------------------------------ 1
 \heading{1.}{Product and user experience}
 
-\begin{person}{Mohamed Sadik Derbi \ $\cdot$ \ Product / UX Engineer}
+\begin{person}{Mohamed-Sadik Derbi \ $\cdot$ \ Software Engineer, product and UX}
 \fld{Contact} +212 651 843 140 \ $\cdot$ \
 \href{https://www.linkedin.com/in/mohamed-sadikderbi/}{linkedin.com/in/mohamed-sadikderbi}
 
 \fld{Key capability} Product thinking, UX/UI design, full-stack development.
 
 \fld{Why him} DocShield produces a correct analysis that a reviewer can still
-misread. Turning a risk score into a decision someone trusts is a product
-problem, not a model problem --- and it is the part I am weakest on.
+misread --- deliverable 03 records exactly that happening. Turning a risk score
+into a decision someone trusts is a product problem, not a model problem, and it
+is the part I am weakest on. He has reviewed the prototype himself, so he starts
+from what it does rather than from a brief.
 
 \fld{Role} Design the verification workflow, the evidence presentation and the
 reviewer's decision path.

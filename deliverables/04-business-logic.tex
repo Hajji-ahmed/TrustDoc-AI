@@ -86,9 +86,12 @@ compliance officer. They feel the pain but rarely hold the budget.
 savings; they buy \emph{reduced exposure} --- a forged payslip approved, a
 diploma never checked, a regulator asking how a file was verified.
 
-\fld{Beachhead} Lending and leasing companies in Morocco. High document volume,
-direct financial loss on a miss, and a verification step that already exists ---
-so the product replaces a manual task rather than creating a new one.
+\fld{Beachhead \small\color{bad}(hypothesis --- not yet confirmed)} Lending and
+leasing companies in Morocco: high document volume, direct financial loss on a
+miss, and a verification step that already exists, so the product replaces a
+manual task rather than creating one. Two reviewers pointed instead to public
+administration and education. The hypothesis stands because of the loss-per-miss
+argument, not because anyone has confirmed it.
 
 %% ------------------------------------------------------ 2
 \heading{2.}{What two external reviews changed}
@@ -149,12 +152,24 @@ must come from interviews, not from an assumption.
 \end{minipage}
 
 \vspace{3pt}
-The second column is deliberately empty of numbers. Quantifying the value
-before speaking to a single reviewer would produce a convincing figure and a
-worthless one.
+The second column is deliberately empty of numbers. Quantifying the value before
+speaking to a single reviewer would produce a convincing figure and a worthless
+one.
+
+\vspace{2pt}
+\fld{What will be measured, in this order} Verification time per document; share
+of files sent to a second reviewer; false positive rate; false negative rate;
+completeness of the audit trail. The first two size the value. The next two
+decide whether anyone can rely on it --- and both external tests so far have
+touched only one side of that pair.
 
 %% ------------------------------------------------------ 4
-\heading{4.}{Business model}
+\heading{4.}{Business model \small\color{bad}(hypothesis)}
+
+\vspace{1pt}
+{\footnotesize\color{muted}Three tiers, none of them tested. Prices and
+packaging are to be validated in pilot and pricing conversations; nothing below
+has been offered to a customer.}
 
 \vspace{2pt}
 % Les 80mm retranchés couvrent les deux colonnes fixes (71mm) et les quatre
@@ -205,18 +220,27 @@ increasing sales-cycle length.
 \begin{tabular}{@{}>{\raggedright\arraybackslash}p{16mm}
                   >{\raggedright\arraybackslash}p{\dimexpr\linewidth-21mm}@{}}
 \rowcolor{zebra}\textbf{\color{navy}Week 1} &
-Ten interviews with reviewers and their managers. Measure the current process
-before proposing to change it. \\[3pt]
+Ten interviews with reviewers and their managers, and a controlled test set:
+matched genuine and altered pairs, built the way the second reviewer built his.
+Measure the current process before proposing to change it. \\[3pt]
 \textbf{\color{navy}Week 2} &
-Close the production gaps: rate limiting, payload ceiling, timestamped audit
-report. Without them there is no pilot. \\[3pt]
+Reliability. Run the outstanding retests, then measure false positives and false
+negatives on that set. Make every flag explainable in one line. Nothing new is
+built until these numbers exist. \\[3pt]
 \rowcolor{zebra}\textbf{\color{navy}Week 3} &
-Run one organization's real files through the tool, side by side with their
-manual check. Compare, and record every disagreement. \\[3pt]
+Pilot. One organization's real files through the tool, side by side with their
+manual check. Compare, and record every disagreement --- the disagreements are
+the finding. \\[3pt]
 \textbf{\color{navy}Week 4} &
-Put a price on the table and see whether anyone pays. Fill in the market
-formula with the three inputs now known. \\
+Price. Put a number on the table and see whether anyone pays. Fill in the market
+formula with the three inputs then known. \\
 \end{tabular}
+
+\vspace{4pt}
+{\footnotesize\color{muted}The order is deliberate and follows the risks the
+validation exposed: trust first, error rates second, real files third, price
+last. Not one new detection category appears before reliability is measured ---
+a reviewer proposed eight, and they wait.}
 
 \vspace{6pt}
 \begin{badbox}{What would break this}

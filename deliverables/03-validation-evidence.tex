@@ -66,8 +66,11 @@
   \par\vspace{8pt}{\color{navy}\bfseries #1\hspace{6pt}#2}\par\vspace{-3pt}}
 
 \newcommand{\fld}[1]{\textbf{\color{navy}#1}\hspace{5pt}}
-\newcommand{\shipped}{{\footnotesize\color{good}\bfseries SHIPPED}}
-\newcommand{\open}{{\footnotesize\color{bad}\bfseries TO RETEST}}
+% Trois niveaux, jamais mélangés : ce qui a été observé, ce qui est corrigé sans
+% avoir été revérifié de bout en bout, et ce qui reste à démontrer.
+\newcommand{\proven}{{\footnotesize\color{good}\bfseries PROVEN}}
+\newcommand{\shipped}{{\footnotesize\color{navy}\bfseries FIXED}}
+\newcommand{\open}{{\footnotesize\color{bad}\bfseries RETEST PENDING}}
 % \partial est une commande mathématique de LaTeX : le statut porte un autre nom.
 \newcommand{\partly}{{\footnotesize\color{muted}\bfseries PARTIAL}}
 \newcommand{\notbuilt}{{\footnotesize\color{bad}\bfseries NOT BUILT}}
@@ -190,9 +193,15 @@ a tuning problem; all four were logic errors.
 \heading{3.}{From feedback to shipped change}
 
 Every point raised was corrected and deployed within the challenge window, not
-deferred to a backlog. The corresponding changes are public in the project
-repository:
+deferred to a backlog. The changes are public in the project repository:
 \href{https://github.com/Hajji-ahmed/TrustDoc-AI}{github.com/Hajji-ahmed/TrustDoc-AI}.
+
+\vspace{2pt}
+{\footnotesize\color{muted}\textbf{FIXED} means the correction is written,
+tested by assertion and deployed. \textbf{PROVEN} means it was afterwards
+observed working in a run produced by someone else. \textbf{RETEST PENDING}
+means the fix is live but the case that exposed the defect has not been run
+again. The three are never merged.}
 
 \vspace{3pt}
 \begin{tabular}{@{}>{\raggedright\arraybackslash}p{40mm}
@@ -206,14 +215,17 @@ under a label that does not say so escapes the check --- accusing a genuine
 document costs more than missing one verification. & \shipped \\[3pt]
 \rowcolor{zebra}Summary contradicts detail &
 Each statement is attributed to its stage: visual analysis first, automatic
-checks second. The model's prose is kept, not rewritten. & \shipped \\[3pt]
+checks second. The model's prose is kept, not rewritten. Later observed in the
+second reviewer's own output. & \proven \\[3pt]
 Two pages never compared &
 All pages are rendered and sent to the model in one request, each announced by
-its number. The prompt requires values repeated across pages to be compared. &
-\shipped \\[3pt]
+its number. The prompt requires values repeated across pages to be compared.
+Pipeline verified; the model's ability to spot the difference is not. &
+\open \\[3pt]
 \rowcolor{zebra}Email alone is weak evidence &
 The prompt forbids any verification routed through the document's own contact
-details, and requires an independent source instead. & \shipped \\[3pt]
+details, and requires an independent source instead. Later observed in the
+second reviewer's own output. & \proven \\[3pt]
 Field types left implicit \emph{(tester's suggestion)} &
 The prompt now states which labels may be used for which value types, so the
 wrong deterministic check cannot be triggered downstream. & \shipped \\[3pt]
@@ -656,7 +668,62 @@ administrative attestations. \\ \hline
 \end{tabular}
 
 %% ------------------------------------------------------ 6
-\heading{9.}{Summary}
+\heading{9.}{Every test, and exactly what it established}
+
+Five reviewers did five different things. Presenting them as five equivalent
+technical validations would overstate the dossier, so the nature of each is
+named.
+
+\vspace{3pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{44mm}
+                  >{\raggedright\arraybackslash}p{\dimexpr\linewidth-84mm}
+                  >{\raggedright\arraybackslash}p{28mm}@{}}
+\rowcolor{zebra}\textbf{\color{navy}Test} & \textbf{\color{navy}Result} &
+\textbf{\color{navy}Status} \\[3pt]
+Altered administrative attestation, designed by the reviewer
+\newline{\footnotesize\color{muted}Managov --- controlled test} &
+The planted date inconsistency was detected, named and localised. &
+\proven \\[3pt]
+\rowcolor{zebra}Control document of that same pair
+\newline{\footnotesize\color{muted}Managov --- controlled test} &
+Uploaded, but the captured screen predates the analysis. No result recorded. &
+\open \\[3pt]
+Officially certified documents
+\newline{\footnotesize\color{muted}Actemium --- independent technical test} &
+Passed unflagged. Evidence of no false positive on the samples tested. &
+\proven \\[3pt]
+\rowcolor{zebra}Wrong validation rule on a date field
+\newline{\footnotesize\color{muted}TecForge --- independent technical test} &
+False positive on a genuine ISO certificate. Rule now requires a matching
+label; covered by assertions. & \shipped \\[3pt]
+Narrative contradicting the findings
+\newline{\footnotesize\color{muted}TecForge --- independent technical test} &
+Fixed, and afterwards observed corrected in another reviewer's output. &
+\proven \\[3pt]
+\rowcolor{zebra}Two-page invoice with an altered number
+\newline{\footnotesize\color{muted}TecForge --- independent technical test} &
+Root cause fixed and pipeline verified. The file itself has not been re-run
+through the model. & \open \\[3pt]
+Verification routed through the document
+\newline{\footnotesize\color{muted}TecForge --- independent technical test} &
+Prompt now requires an independent source; observed working in another
+reviewer's output. & \proven \\[3pt]
+\rowcolor{zebra}Well-made or AI-generated document
+\newline{\footnotesize\color{muted}Reported by a reviewer} &
+Passes every check. A coherent fabrication is invisible to screening ---
+a limitation, stated rather than hidden. & \notbuilt \\[3pt]
+Product direction and scope
+\newline{\footnotesize\color{muted}INKWAY --- product feedback, no document test} &
+Eight capability proposals, each tied to an operational situation. No detection
+claim follows from it, and none is made. & \partly \\[3pt]
+\rowcolor{zebra}Several documents, then a scope objection
+\newline{\footnotesize\color{muted}Verve --- test plus product judgement} &
+Results judged promising; no specific defect reported. The contribution is the
+sequencing argument, not a measured result. & \partly \\
+\end{tabular}
+
+%% ------------------------------------------------------ 10
+\heading{10.}{Summary}
 
 \fld{Completed} Five external companies, five reviewers --- an HR practitioner,
 a company director, a project manager, an electrical engineer and a software

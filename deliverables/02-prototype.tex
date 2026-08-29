@@ -138,8 +138,9 @@ so a flagged region always lands where the reviewer looks. \\[3pt]
 All pages go to the model in a single request, which lets it compare values
 across pages instead of judging each page alone. \\[3pt]
 \textbf{\color{navy}04} & \textbf{Deterministic checks} &
-Code re-verifies what a model cannot be trusted with: identifier length,
-IBAN mod-97 key, VAT arithmetic, ordering of dates. \\[3pt]
+Code re-verifies what a model cannot be trusted with: identifier length, IBAN
+mod-97 key, VAT arithmetic and rate, dates that do not exist, periods ending
+before they begin, values differing between pages. \\[3pt]
 \rowcolor{zebra}\textbf{\color{navy}05} & \textbf{Report} &
 Risk score out of 100, numbered anomalies, extracted fields, and a
 recommendation oriented toward human verification. \\
@@ -210,10 +211,11 @@ Multi-page rasterization, with the page cap that bounds cost per analysis. \\
   what it is waiting for rather than showing an empty score.}
 
 \shot{assets/screen-001.png}{%
-  \textbf{2.} A genuine certificate --- 0 out of 100, no anomaly. Every point of
-  the score is traceable to a listed finding, so nothing found means nothing
-  scored. The next steps point to the issuing school and to public registers,
-  never to the contact details printed on the document itself.}
+  \textbf{2.} A genuine certificate --- no anomaly, and next steps pointing to
+  the issuing school and to public registers rather than to the contact details
+  printed on the document. The capture predates a later change: a clean document
+  now scores a small residual instead of zero, because zero reads as a
+  certificate of conformity and the tool certifies nothing.}
 
 \shot{assets/screen-002.png}{%
   \textbf{3.} An invoice at moderate risk --- two anomalies, each localised on
@@ -224,16 +226,63 @@ Multi-page rasterization, with the page cap that bounds cost per analysis. \\
 % Sans cette rupture, la section se coupe entre la page des captures et la
 % suivante : titre et premier paragraphe d'un côté, encadré de l'autre.
 \newpage
-\heading{6.}{Positioning and honest limits}
+\heading{6.}{What is proven, and what is not}
 
-DocShield AI is a screening aid, not an authentication authority. The interface
-frames every output as decision support and recommends human verification when
-the evidence warrants it.
+The distinction matters more than the feature list. Everything on the left has
+been observed working; nothing on the right has been demonstrated, and none of
+it is claimed.
+
+\vspace{3pt}
+\noindent
+\begin{minipage}[t]{0.485\linewidth}
+\begin{goodbox}{Proven}
+\begin{itemize}[leftmargin=14pt,itemsep=3pt,topsep=1pt,
+                label=\textcolor{good}{\small$\checkmark$}]
+  \item Upload and rendering of PDF, JPG and PNG.
+  \item Field extraction on every document tested, including a flattened scan.
+  \item Anomalies localised and numbered on the page.
+  \item Deterministic checks applied to exact rules, covered by automated
+        assertions.
+  \item Multi-page documents sent to the model in one request.
+  \item Recommendations that route verification outside the document.
+\end{itemize}
+\end{goodbox}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.485\linewidth}
+\begin{badbox}{Not yet proven}
+\begin{itemize}[leftmargin=14pt,itemsep=3pt,topsep=1pt,
+                label=\textcolor{bad}{\small$\times$}]
+  \item Detection accuracy across fraud types.
+  \item Detection of a well-made or AI-generated forgery.
+  \item Cross-\emph{document} verification within one file.
+  \item Metadata and file-history forensics.
+  \item Verification against an external issuer or register.
+  \item Behaviour at production scale.
+\end{itemize}
+\end{badbox}
+\end{minipage}
+
+\vspace{4pt}
+These are the normal limits of a prototype built in 72 hours, and they are
+listed rather than left to be discovered. The first three are the subject of
+deliverable 03; the last three are architecture, not tuning.
+
+%% ------------------------------------------------------ 7
+\heading{7.}{Positioning}
+
+\vspace{2pt}
+\begin{note}{The sentence the whole product rests on}
+DocShield AI does not certify documents. It identifies suspicious signals and
+provides the evidence behind them, so that a human reviewer makes a better
+verification decision. A document that is fabricated but internally coherent
+passes every check here: screening detects inconsistency, not falsity.
+\end{note}
 
 \vspace{2pt}
 {\footnotesize\color{muted}
 \textbf{Out of 72h scope}, part of the target architecture: OCR tuning,
-dedicated manipulation models, metadata forensics, cross-document checks.}
+dedicated manipulation models, metadata forensics, cross-document checks,
+issuer verification.}
 
 
 \end{document}

@@ -4,15 +4,20 @@
 
 \documentclass[10pt,a4paper]{article}
 
+% tcolorbox charge xcolor sans l'option « table » ; on la passe en amont pour
+% que \rowcolor soit disponible.
+\PassOptionsToPackage{table}{xcolor}
+
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
-\usepackage[margin=16mm,top=14mm,bottom=12mm]{geometry}
+\usepackage[margin=15mm,top=12mm,bottom=10mm]{geometry}
 
 \usepackage{charter}
 \usepackage[activate={true,nocompatibility},final,tracking=true,
             factor=1100,stretch=12,shrink=12]{microtype}
 
 \usepackage{amssymb}   % \checkmark
+\usepackage{array}
 \usepackage{xcolor}
 \usepackage{enumitem}
 \usepackage[most]{tcolorbox}
@@ -26,10 +31,11 @@
 \definecolor{badbg}{HTML}{FDF3F2}
 \definecolor{ink}{HTML}{16202A}
 \definecolor{muted}{HTML}{68727E}
+\definecolor{zebra}{HTML}{F4F7FA}
 
 \pagestyle{empty}
 \setlength{\parindent}{0pt}
-\setlength{\parskip}{3pt}
+\setlength{\parskip}{2pt}
 \color{ink}
 
 \setlist[itemize]{leftmargin=13pt,itemsep=2pt,topsep=2pt,parsep=0pt}
@@ -57,7 +63,7 @@
 
 %% ------------------------------------------------------ titres
 \newcommand{\heading}[2]{%
-  \par\vspace{7pt}%
+  \par\vspace{5pt}%
   {\color{navy}\bfseries #1\hspace{6pt}#2}%
   \par\vspace{-2pt}%
 }
@@ -80,111 +86,132 @@
 \textcolor{navy}{\rule{\linewidth}{1pt}}
 
 %% ------------------------------------------------------ 1
-\heading{1.}{Problem and users}
+\heading{1.}{Problem}
 
 Official documents are falsified through edited text, replaced photos, forged
-stamps, altered QR codes --- and now through AI generation. Manual review is
-slow, repetitive, and misses precisely the subtle cases.
-
-\lead{Who.} Teams that verify documents at volume: recruitment, finance,
-compliance and administration.
-
-\vspace{4pt}
-\begin{note}{Positioning}
-An AI-assisted screening tool that returns \textbf{evidence a reviewer can act
-on} --- not a verdict. Every flag is drawn and numbered on the document itself,
-so the reviewer sees \emph{where} to look, not only \emph{that} something is wrong.
-\end{note}
+stamps and altered identifiers --- and now through AI generation. Manual review
+is slow, repetitive, and misses precisely the subtle cases. The reviewer rarely
+lacks judgement: they lack time, and a place to look.
 
 %% ------------------------------------------------------ 2
-\heading{2.}{Evidence}
+\heading{2.}{Target users}
 
-\begin{note}{Tests run against the working prototype}
-\begin{enumerate}[label=\textcolor{navy}{\bfseries\arabic*.}]
-  \item AI-generated invoice, visually flawless $\rightarrow$ scored \emph{low risk}.
-  \item Client tax identifier of invalid length $\rightarrow$ missed by the model.
-  \item Low score returned together with a reject verdict $\rightarrow$ contradictory output.
-\end{enumerate}
-\vspace{2pt}
-Each finding changed the build. An external tester at TecForge then ran three
-documents through the prototype and reported four further defects --- all
-corrected within the challenge window. See deliverable 03.
-\end{note}
+\lead{User} The person who checks documents at volume: a credit analyst, an HR
+recruiter, a compliance officer, an administrative clerk.
+\lead{Buyer} The head of risk, compliance or operations, who buys reduced
+exposure rather than saved minutes.
 
 %% ------------------------------------------------------ 3
-\heading{3.}{Solution --- a division of labour}
+\heading{3.}{Solution --- screening, not certification}
 
-{\footnotesize\color{steel}\bfseries
-Upload $\rightarrow$ Normalization $\rightarrow$ Multimodal analysis
-$\rightarrow$ Deterministic checks $\rightarrow$ Risk score $\rightarrow$ \mbox{Report}}
+\vspace{2pt}
+\begin{note}{What the product claims, and what it refuses to claim}
+DocShield AI does not certify documents. It surfaces suspicious signals and the
+evidence behind them, so a human reviewer decides faster and better: every flag
+is drawn and numbered on the document itself. A document that is fabricated but
+internally coherent passes every check here --- screening detects inconsistency,
+not falsity, and authenticity can only be established with the issuer.
+\end{note}
 
-\vspace{5pt}
+\vspace{4pt}
 \noindent
 \begin{minipage}[t]{0.485\linewidth}
 \begin{goodbox}{Handled by the model}
-\begin{itemize}[leftmargin=14pt,itemsep=4pt,topsep=1pt,
+\begin{itemize}[leftmargin=14pt,itemsep=3pt,topsep=1pt,
                 label=\textcolor{good}{\small$\checkmark$}]
   \item \textbf{Reads} the document and extracts fields.
   \item \textbf{Sees} visual manipulation: mixed fonts, broken alignment,
         re-inserted text.
-  \item \textbf{Explains} each finding in plain language.
+  \item \textbf{Compares} pages against one another.
 \end{itemize}
 \end{goodbox}
 \end{minipage}\hfill
 \begin{minipage}[t]{0.485\linewidth}
 \begin{badbox}{Never trusted to the model}
-\begin{itemize}[leftmargin=14pt,itemsep=4pt,topsep=1pt,
+\begin{itemize}[leftmargin=14pt,itemsep=3pt,topsep=1pt,
                 label=\textcolor{bad}{\small$\times$}]
   \item \textbf{Counting digits} --- identifier length.
   \item \textbf{Checksums} --- IBAN mod-97 key.
-  \item \textbf{Arithmetic} --- VAT and column totals.
+  \item \textbf{Arithmetic and calendars} --- VAT, totals, impossible dates,
+        inverted periods.
 \end{itemize}
-\vspace{3pt}
-{\footnotesize\color{muted}Handled by deterministic code: exact and auditable.}
+\vspace{2pt}
+{\footnotesize\color{muted}Deterministic code: exact and auditable.}
 \end{badbox}
 \end{minipage}
 
 %% ------------------------------------------------------ 4
-\heading{4.}{Prototype --- live}
+\heading{4.}{Prototype --- deployed and open}
 
-\begin{itemize}
-  \item PDF, JPG, PNG. Every page is rendered and sent, so an inconsistency
-        between two pages of one document is visible to the model. Preview and
-        model input share the same images, so a flagged region always lands
-        where the reviewer looks.
-  \item Strict JSON schema, re-validated server-side --- a malformed analysis is
-        rejected, never half-displayed.
-  \item A failed deterministic check raises the score and blocks an ``accept''
-        verdict.
-\end{itemize}
+{\footnotesize\color{steel}\bfseries
+Upload $\rightarrow$ Normalization $\rightarrow$ Multimodal analysis
+$\rightarrow$ Deterministic checks $\rightarrow$ Risk score $\rightarrow$ \mbox{Report}}
 
-\vspace{2pt}
-{\footnotesize\color{muted}
-\textbf{Out of 72h scope}, part of the target architecture: OCR tuning,
-dedicated manipulation models, metadata forensics, cross-document checks.}
+\vspace{3pt}
+PDF, JPG and PNG. Every page is rendered and sent together, so a value changing
+between two pages is visible to the model. Preview and model input share the
+same images, so a flagged region lands where the reviewer looks. Output passes a
+strict JSON schema, re-validated server-side; a failed deterministic check
+raises the score floor and blocks an ``accept'' verdict.
 
 %% ------------------------------------------------------ 5
-\heading{5.}{Validation and business logic}
+\heading{5.}{Validation --- the loop that shaped the build}
 
-Focus: how documents are verified today, which frauds are hardest to catch, and
-what evidence earns a reviewer's trust. A learning log records who was
-contacted, what was learned, what was surprising, and what changed.
+{\footnotesize\color{steel}\bfseries
+Build $\rightarrow$ Test $\rightarrow$ Failure $\rightarrow$ Diagnose
+$\rightarrow$ Fix $\rightarrow$ Retest $\rightarrow$ Learn}
+
+\vspace{3pt}
+Five reviewers from five companies: four ran documents through the deployed
+prototype, one assessed the product without testing it. The first reported four
+defects, each
+traced to a specific line before anything was changed, all four corrected within
+the challenge window. Deliverable 03 records every message verbatim, failures
+included.
+
+%% ------------------------------------------------------ 6
+\heading{6.}{Key learnings --- and what each one is worth}
 
 \vspace{2pt}
-\lead{Customer} \ Organizations verifying documents at volume --- lenders,
-insurers, recruiters, schools, administrations.\\
-\lead{Value} \ Less manual screening, faster triage, traceable evidence.\\
-\lead{Model} \ B2B SaaS per seat or per document, plus an integration API.\\
-\lead{Market} \ Finance, recruitment, insurance, education, public sector.\\
-\lead{Next 30 days} \ Pilot with one organization, add metadata forensics and
-cross-document consistency, test pricing.
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{30mm}
+                  >{\raggedright\arraybackslash}p{\dimexpr\linewidth-37mm}@{}}
+\rowcolor{zebra}\textbf{\color{good}PROVEN} &
+A planted date inconsistency detected, named and localised on a document
+designed by a third party. Genuine certified documents passed unflagged. \\[2pt]
+\textbf{\color{navy}FIXED} &
+Four reported defects corrected and deployed; two independently observed
+working afterwards. \\[2pt]
+\rowcolor{zebra}\textbf{\color{bad}TO RETEST} &
+Cross-page fix deployed and pipeline verified, but the two-page invoice that
+exposed the gap has not been re-run --- end-to-end detection not yet
+demonstrated. \\[2pt]
+\textbf{\color{bad}LIMIT} &
+A well-made or AI-generated document that is internally coherent is missed by
+design. \\
+\end{tabular}
 
-\vspace{7pt}
-\begin{note}{Key assumption}
-Organizations will adopt AI-assisted screening only if it shows transparent
-evidence for every flag. A score without justification will not be trusted ---
-and should not be.
-\end{note}
+%% ------------------------------------------------------ 7
+\heading{7.}{Business logic}
 
+\lead{Value} Less manual screening, faster triage, a traceable record of every
+check. Minutes saved and the cost of a missed forgery are \emph{not} measured
+yet, and no figure is asserted here.\\
+\lead{Model \small\color{bad}(hypothesis)} Per document, per seat, or an
+integration API --- to be tested in pricing conversations, not assumed.\\
+\lead{Beachhead \small\color{bad}(hypothesis)} Lending and leasing in Morocco,
+for volume and direct loss per miss. Two reviewers pointed instead to public
+administration and education; the question is open.
+
+%% ------------------------------------------------------ 8
+\heading{8.}{Next step}
+
+Reliability before reach. Measure false positives and false negatives on a
+controlled document set, re-run the outstanding test, then pilot with one
+organization before adding any new detection category.
+
+\vspace{2pt}
+{\footnotesize\color{muted}\textbf{Key assumption.} Organizations will adopt
+AI-assisted screening only if every flag carries transparent evidence. An
+unjustified score will not be trusted --- and should not be.}
 
 \end{document}
