@@ -73,15 +73,17 @@
 \newcommand{\notbuilt}{{\footnotesize\color{bad}\bfseries NOT BUILT}}
 
 %% ------------------------------------------------------ capture d'écran
+% La largeur est un argument optionnel : une capture large se lit à pleine
+% mesure, une capture presque carrée occuperait sinon toute la hauteur de page.
 \newcommand{\shotwidth}{0.94\linewidth}
-\newcommand{\shot}[2]{%
+\newcommand{\shot}[3][\shotwidth]{%
   \par\vspace{4pt}%
   \begingroup\setlength{\fboxsep}{1.5pt}\setlength{\fboxrule}{0.5pt}%
   \centering
-  \fcolorbox{shotline}{white}{\includegraphics[width=\shotwidth]{#1}}%
+  \fcolorbox{shotline}{white}{\includegraphics[width=#1]{#2}}%
   \par\vspace{2pt}%
-  \begin{minipage}{\shotwidth}\centering
-    {\footnotesize\color{muted}#2}
+  \begin{minipage}{#1}\centering
+    {\footnotesize\color{muted}#3}
   \end{minipage}\par
   \endgroup
   \vspace{3pt}%
@@ -531,9 +533,65 @@ the beachhead in deliverable 04 has received.
 \newpage
 
 %% ------------------------------------------------------ 7
+\heading{7.}{Fifth external validation --- Verve Technologie}
+
+\vspace{2pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{26mm}
+                  >{\raggedright\arraybackslash}p{\dimexpr\linewidth-33mm}@{}}
+\rowcolor{zebra}\textbf{\color{navy}Company} & Verve Technologie \\[3pt]
+\textbf{\color{navy}Reviewer} & Mohamed-Sadik Derbi, Software Engineer ---
+written feedback, 29 August 2026 \\[3pt]
+\rowcolor{zebra}\textbf{\color{navy}Material} & Several documents, run against the
+deployed prototype. \\[3pt]
+\textbf{\color{navy}Independence} & Partial, and stated here rather than left to
+be discovered: this reviewer also appears in deliverable 05 as a proposed team
+member. His opinion is informed, not unconnected. \\
+\end{tabular}
+
+\shot[0.60\linewidth]{assets/feedback-verve.png}{Feedback received from Mohamed-Sadik Derbi (Verve Technologie), reproduced verbatim.}
+
+\vspace{2pt}
+\begin{note}{The recommendation: go deep before going wide}
+The idea was judged interesting and practical, the results \emph{``quite
+promising''}. The reservation is one of scope: the prototype would be more
+effective \emph{``if it initially focused on detecting one specific type of
+fraud''}, gaining accuracy and reliability before expanding to others.
+\end{note}
+
+\vspace{4pt}
+\begin{badbox}{This contradicts the third review --- and the contradiction is useful}
+The third reviewer returned eight capabilities to add. The fifth says add none
+yet, and narrow instead. Both are experienced; both cannot be followed at once.
+
+\vspace{3pt}
+They disagree on the route, not the diagnosis. Each is reacting to the same
+weakness --- the tool is general and therefore shallow. One reads that as
+missing capabilities, the other as insufficient depth. The eight proposals
+describe what a decision eventually needs; the fifth review describes the order
+in which to get there.
+\end{badbox}
+
+\vspace{4pt}
+\begin{note}{Where the dossier says to start, if one type is chosen}
+The evidence already points to one. The only falsification the prototype has
+been shown to catch, on a document designed by someone else, was an internal
+date inconsistency on an administrative attestation. Cross-page consistency ships
+today. And two reviewers, unprompted and from different companies, named
+education and public administration --- both certificate-heavy, both document
+families where dates, periods and reference numbers carry the meaning.
+
+\vspace{3pt}
+Narrowing to \textbf{certificates and administrative attestations}, judged on
+internal data consistency, would follow the fifth reviewer's advice without
+discarding anything already built or proven.
+\end{note}
+
+\newpage
+
+%% ------------------------------------------------------ 8
 % Le tableau à remplir et la synthèse ouvrent une page à eux : laissés à la
 % suite, ils coupaient la section finale entre deux pages.
-\heading{7.}{Validation register}
+\heading{8.}{Validation register}
 
 One line per company contacted during the challenge. Only verified
 conversations and real feedback are recorded here; the blank rows are reserved
@@ -585,15 +643,25 @@ so. Read the result as the document being ``certified and trustworthy'', which
 the tool never claims. Proposes education and public administration. &
 Absence of false positives now evidenced. Interface wording confirmed as a real
 defect, not a preference. Next: have him run an altered document. \\ \hline
-\rule{0pt}{16mm} & & & \\ \hline
+\rowcolor{zebra}
+Verve Technologie &
+Mohamed-Sadik Derbi\newline \textit{Software Engineer} &
+Idea judged practical, results promising on several documents. Would narrow the
+prototype to one type of fraud first, for accuracy and reliability, before
+widening. Also listed in deliverable 05 as a proposed team member, so informed
+rather than unconnected. &
+Sequencing question opened against the third reviewer's eight proposals.
+Candidate first vertical identified from existing evidence: certificates and
+administrative attestations. \\ \hline
 \end{tabular}
 
 %% ------------------------------------------------------ 6
-\heading{8.}{Summary}
+\heading{9.}{Summary}
 
-\fld{Completed} Four external companies, four reviewers --- an HR practitioner,
-a company director, a project manager and an engineer --- four defects found and
-four corrections shipped within the challenge window.
+\fld{Completed} Five external companies, five reviewers --- an HR practitioner,
+a company director, a project manager, an electrical engineer and a software
+engineer --- four defects found and four corrections shipped within the
+challenge window. Four of the five had no prior connection to the project.
 
 \fld{Confirmed from outside} The boundary the product was built on --- report
 anomalies, never certify authenticity --- was reached independently by every
@@ -612,6 +680,11 @@ both.
 
 \fld{Confirmed as a defect} The interface lets its output be read as
 certification. The third reviewer predicted it; the fourth did it.
+
+\fld{Open question} Scope. One reviewer would add eight capabilities, another
+would narrow to a single type of fraud first. The disagreement is about order,
+not direction, and the evidence points to certificates and administrative
+attestations as the first vertical.
 
 \fld{Next steps} Have the fourth reviewer run an altered document, so detection
 and its absence come from the same hand. Re-run the two-page invoice from the
