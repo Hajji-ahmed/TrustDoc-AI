@@ -8,11 +8,11 @@ export function ErrorState({ message, onRetry }: { message: string; onRetry: () 
           !
         </span>
       </div>
-      <h3 className="text-sm font-semibold">L&apos;analyse n&apos;a pas abouti</h3>
+      <h3 className="text-sm font-semibold">The analysis did not complete</h3>
       <p className="mt-1.5 max-w-sm text-sm text-[var(--color-ink-muted)]">{message}</p>
       <div className="mt-5 w-40">
         <Button onClick={onRetry} variant="secondary">
-          Réessayer
+          Try again
         </Button>
       </div>
     </div>

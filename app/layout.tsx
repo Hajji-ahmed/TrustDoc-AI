@@ -2,14 +2,14 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: "DocShield AI — Contrôle d'authenticité documentaire",
+  title: 'DocShield AI — Document authenticity screening',
   description:
-    'Analyse assistée par IA de documents officiels : score de risque, anomalies détectées et informations extraites.',
+    'AI-assisted analysis of official documents: risk score, detected anomalies and extracted information.',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fr">
+    <html lang="en">
       <body className="min-h-screen antialiased">{children}</body>
     </html>
   )

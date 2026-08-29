@@ -6,10 +6,10 @@ export function EmptyState() {
           ⌕
         </span>
       </div>
-      <h3 className="text-sm font-semibold">Aucune analyse en cours</h3>
+      <h3 className="text-sm font-semibold">No analysis in progress</h3>
       <p className="mt-1.5 max-w-sm text-sm text-[var(--color-ink-muted)]">
-        Déposez un document officiel dans la zone de gauche, puis lancez l&apos;analyse pour
-        obtenir un score de risque et le détail des anomalies détectées.
+        Drop an official document in the area on the left. The analysis starts on its own
+        and returns a risk score with the detail of every anomaly found.
       </p>
     </div>
   )

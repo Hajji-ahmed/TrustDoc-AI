@@ -3,9 +3,9 @@ import type { RiskLevel, SuspiciousElement, SuspiciousRegion } from '@/lib/types
 export type { RiskLevel }
 
 export const RISK_LABELS: Record<RiskLevel, string> = {
-  LOW: 'Risque faible',
-  MEDIUM: 'Risque modéré',
-  HIGH: 'Risque élevé',
+  LOW: 'Low risk',
+  MEDIUM: 'Moderate risk',
+  HIGH: 'High risk',
 }
 
 export const RISK_STYLES: Record<
@@ -45,9 +45,9 @@ export function riskLevelFromScore(score: number): RiskLevel {
 // entier : un document peut être « à risque faible », mais une anomalie déjà
 // signalée n'est jamais « faible risque » — elle est de faible sévérité.
 export const SEVERITY_LABELS: Record<RiskLevel, string> = {
-  LOW: 'Sévérité faible',
-  MEDIUM: 'Sévérité modérée',
-  HIGH: 'Sévérité élevée',
+  LOW: 'Low severity',
+  MEDIUM: 'Moderate severity',
+  HIGH: 'High severity',
 }
 
 // Couleur du badge d'une anomalie. Jamais de vert, pour la même raison que

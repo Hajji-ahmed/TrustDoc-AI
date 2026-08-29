@@ -54,7 +54,7 @@ export function DocumentPreview({
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={page.dataUrl}
-          alt={`Aperçu de ${document.fileName}, page ${pageIndex + 1}`}
+          alt={`Preview of ${document.fileName}, page ${pageIndex + 1}`}
           className="block h-auto w-full"
         />
 
@@ -125,7 +125,7 @@ export function DocumentPreview({
                 type="button"
                 onClick={() => setPageIndex(index)}
                 aria-current={current ? 'true' : undefined}
-                aria-label={`Page ${index + 1}${marked ? ', comporte des zones signalées' : ''}`}
+                aria-label={`Page ${index + 1}${marked ? ', contains flagged areas' : ''}`}
                 className={`relative h-8 min-w-8 rounded-lg px-2.5 text-xs font-semibold transition-colors ${
                   current
                     ? 'bg-[var(--color-brand)] text-[var(--color-on-dark)]'
@@ -151,23 +151,21 @@ export function DocumentPreview({
         <span className="truncate">{document.fileName}</span>
         <span className="shrink-0">
           {page.width} × {page.height} px
-          {document.pageCount > 1 ? ` — page ${pageIndex + 1} sur ${document.pageCount}` : ''}
+          {document.pageCount > 1 ? ` — page ${pageIndex + 1} of ${document.pageCount}` : ''}
         </span>
       </div>
 
       {skippedCount > 0 ? (
         <p className="mt-2 text-xs text-[var(--color-ink-muted)]">
-          Les {analyzedCount} premières pages sont analysées. {skippedCount} page
-          {skippedCount > 1 ? 's' : ''} au-delà n&apos;
-          {skippedCount > 1 ? 'ont' : 'a'} pas été transmise{skippedCount > 1 ? 's' : ''}.
+          The first {analyzedCount} pages are analysed. {skippedCount} further page
+          {skippedCount > 1 ? 's were' : ' was'} not sent.
         </p>
       ) : null}
 
       {drawable.length > 0 ? (
         <p className="mt-2 text-xs text-[var(--color-ink-muted)]">
-          {drawable.length} zone{drawable.length > 1 ? 's' : ''} signalée
-          {drawable.length > 1 ? 's' : ''} sur cette page — les numéros renvoient à la liste
-          des anomalies.
+          {drawable.length} flagged area{drawable.length > 1 ? 's' : ''} on this page — the
+          numbers refer to the anomaly list.
         </p>
       ) : null}
     </div>

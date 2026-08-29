@@ -6,11 +6,11 @@ import { SEVERITY_LABELS, regionNumbers, severityBadgeLevel } from '@/lib/risk'
 import type { SuspiciousElement, SuspiciousRegion } from '@/lib/types'
 
 const CATEGORY_LABELS: Record<SuspiciousElement['category'], string> = {
-  TYPOGRAPHIE: 'Typographie',
-  MISE_EN_PAGE: 'Mise en page',
-  COHERENCE_DONNEES: 'Cohérence des données',
-  MANIPULATION_IMAGE: "Manipulation d'image",
-  ELEMENTS_SECURITE: 'Éléments de sécurité',
+  TYPOGRAPHIE: 'Typography',
+  MISE_EN_PAGE: 'Layout',
+  COHERENCE_DONNEES: 'Data coherence',
+  MANIPULATION_IMAGE: 'Image manipulation',
+  ELEMENTS_SECURITE: 'Security features',
 }
 
 export function SuspiciousElements({
@@ -30,14 +30,12 @@ export function SuspiciousElements({
     <Card accent="clay">
       <CardHeader
         accent="clay"
-        title="Éléments suspects"
-        subtitle={`${elements.length} anomalie${elements.length > 1 ? 's' : ''} détectée${
-          elements.length > 1 ? 's' : ''
-        }`}
+        title="Suspicious elements"
+        subtitle={`${elements.length} anomal${elements.length > 1 ? 'ies' : 'y'} detected`}
         />
       {elements.length === 0 ? (
         <p className="p-5 text-sm text-[var(--color-ink-muted)]">
-          Aucune anomalie n&apos;a été détectée sur ce document.
+          No anomaly was detected on this document.
         </p>
       ) : (
         <ul className="divide-y divide-[var(--color-line)]">
@@ -73,7 +71,7 @@ export function SuspiciousElements({
                 </div>
                 <p className="mt-1 text-xs text-[var(--color-ink-muted)]">
                   {CATEGORY_LABELS[element.category]}
-                  {number ? '' : ' — non localisable sur le document'}
+                  {number ? '' : ' — not locatable on the document'}
                 </p>
                 <p className="mt-1.5 text-sm text-[var(--color-ink-muted)]">
                   {element.description}

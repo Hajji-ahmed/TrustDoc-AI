@@ -2,9 +2,9 @@ import { Card, CardHeader } from '@/components/ui/Card'
 import type { ExtractedField } from '@/lib/types'
 
 function confidenceLabel(confidence: number) {
-  if (confidence >= 0.9) return 'Lecture sûre'
-  if (confidence >= 0.7) return 'Lecture probable'
-  return 'Lecture incertaine'
+  if (confidence >= 0.9) return 'Confident reading'
+  if (confidence >= 0.7) return 'Probable reading'
+  return 'Uncertain reading'
 }
 
 export function ExtractedFields({ fields }: { fields: ExtractedField[] }) {
@@ -17,14 +17,12 @@ export function ExtractedFields({ fields }: { fields: ExtractedField[] }) {
     <Card accent="olive">
       <CardHeader
         accent="olive"
-        title="Informations extraites"
-        subtitle={`${fields.length} champ${fields.length > 1 ? 's' : ''} identifié${
-          fields.length > 1 ? 's' : ''
-        }`}
+        title="Extracted information"
+        subtitle={`${fields.length} field${fields.length > 1 ? 's' : ''} identified`}
       />
       {fields.length === 0 ? (
         <p className="p-5 text-sm text-[var(--color-ink-muted)]">
-          Aucun champ n&apos;a pu être extrait de ce document.
+          No field could be extracted from this document.
         </p>
       ) : (
         <ul className="divide-y divide-[var(--color-line)]">

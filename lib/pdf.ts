@@ -74,7 +74,7 @@ async function prepareImage(file: File): Promise<PreparedDocument> {
   } catch {
     throw new DocumentPrepError(
       'UNREADABLE_IMAGE',
-      "Cette image n'a pas pu être ouverte. Essayez un autre fichier.",
+      'This image could not be opened. Try another file.',
     )
   } finally {
     URL.revokeObjectURL(objectUrl)
@@ -122,7 +122,7 @@ async function preparePdf(file: File): Promise<PreparedDocument> {
   } catch {
     throw new DocumentPrepError(
       'UNREADABLE_PDF',
-      "Ce PDF n'a pas pu être lu. Il est peut-être protégé ou endommagé.",
+      'This PDF could not be read. It may be protected or damaged.',
     )
   }
 }
@@ -131,14 +131,14 @@ export async function prepareDocument(file: File): Promise<PreparedDocument> {
   if (!ACCEPTED_TYPES.includes(file.type)) {
     throw new DocumentPrepError(
       'UNSUPPORTED_TYPE',
-      'Format non pris en charge. Déposez un fichier PDF, JPG ou PNG.',
+      'Unsupported format. Drop a PDF, JPG or PNG file.',
     )
   }
 
   if (file.size > MAX_FILE_SIZE_BYTES) {
     throw new DocumentPrepError(
       'TOO_LARGE',
-      'Fichier trop volumineux. La taille maximale est de 10 Mo.',
+      'File too large. The maximum size is 10 MB.',
     )
   }
 

@@ -25,7 +25,7 @@ export function UploadZone({
       setError(
         cause instanceof DocumentPrepError
           ? cause.message
-          : "Le document n'a pas pu être préparé. Réessayez avec un autre fichier.",
+          : 'The document could not be prepared. Try another file.',
       )
     } finally {
       setPreparing(false)
@@ -51,9 +51,9 @@ export function UploadZone({
             : 'border-[var(--color-line)] bg-[var(--color-surface)]'
         }`}
       >
-        <p className="text-sm font-medium">Déposez votre document ici</p>
+        <p className="text-sm font-medium">Drop your document here</p>
         <p className="mt-1 text-xs text-[var(--color-ink-muted)]">
-          PDF, JPG ou PNG — 10 Mo maximum
+          PDF, JPG or PNG — 10 MB maximum
         </p>
         <button
           type="button"
@@ -61,7 +61,7 @@ export function UploadZone({
           onClick={() => inputRef.current?.click()}
           className="mt-4 rounded-full border border-[var(--color-line)] px-3 py-1.5 text-xs font-medium hover:bg-[var(--color-canvas)] disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {preparing ? 'Préparation…' : 'Parcourir les fichiers'}
+          {preparing ? 'Preparing…' : 'Browse files'}
         </button>
         <input
           ref={inputRef}

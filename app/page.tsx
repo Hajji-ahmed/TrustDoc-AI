@@ -58,7 +58,7 @@ export default function DashboardPage() {
         setErrorMessage(
           'error' in payload
             ? payload.error.message
-            : "Le service d'analyse est momentanément indisponible.",
+            : 'The analysis service is temporarily unavailable.',
         )
         setStatus('error')
         return
@@ -69,7 +69,7 @@ export default function DashboardPage() {
       setStatus('success')
     } catch {
       setErrorMessage(
-        "La connexion au service d'analyse a échoué. Vérifiez votre réseau puis réessayez.",
+        'The connection to the analysis service failed. Check your network and try again.',
       )
       setStatus('error')
     }
@@ -79,7 +79,7 @@ export default function DashboardPage() {
     mode === 'demo' ? (
       <span className="inline-flex shrink-0 items-center gap-2 rounded-full border border-[var(--color-brand)] bg-[var(--color-brand-soft)] px-3.5 py-1.5 text-xs font-semibold text-[var(--color-brand-ink)]">
         <span className="h-1.5 w-1.5 rounded-full bg-[var(--color-brand)]" aria-hidden="true" />
-        Mode démonstration
+        Demo mode
       </span>
     ) : null
 
@@ -100,10 +100,10 @@ export default function DashboardPage() {
         <header className="flex flex-wrap items-start justify-between gap-4 px-5 py-6 sm:px-7">
           <div className="min-w-0">
             <h1 className="font-display text-2xl leading-tight sm:text-3xl">
-              Analyse de document
+              Document analysis
             </h1>
             <p className="mt-1 text-sm text-[var(--color-ink-muted)]">
-              Pré-contrôle d&apos;authenticité — score, anomalies localisées, recommandation.
+              Authenticity pre-check — score, located anomalies, recommendation.
             </p>
           </div>
           {demoBadge}
@@ -115,7 +115,7 @@ export default function DashboardPage() {
           <div className="grid gap-6 xl:grid-cols-5">
             <section className="xl:col-span-2">
               <Card accent="sand">
-                <CardHeader accent="sand" title="Document à contrôler" />
+                <CardHeader accent="sand" title="Document to screen" />
                 <div className="space-y-4 p-5">
                   <UploadZone onPrepared={handlePrepared} disabled={status === 'analyzing'} />
                   {preparedDocument ? (
@@ -135,7 +135,7 @@ export default function DashboardPage() {
                       onClick={() => void runAnalysis(preparedDocument)}
                       disabled={status === 'analyzing'}
                     >
-                      {status === 'analyzing' ? 'Analyse en cours…' : "Relancer l'analyse"}
+                      {status === 'analyzing' ? 'Analysing…' : 'Run the analysis again'}
                     </Button>
                   ) : null}
                 </div>

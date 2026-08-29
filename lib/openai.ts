@@ -20,8 +20,8 @@ export async function analyzeDocument(
   // son numéro, sur lequel s'appuie le champ page des zones suspectes.
   const intro =
     pageDataUrls.length > 1
-      ? `Analyse ce document de ${pageDataUrls.length} pages et renvoie le résultat structuré attendu. Les pages sont transmises dans l'ordre ci-dessous et forment un seul et même document.`
-      : 'Analyse ce document et renvoie le résultat structuré attendu.'
+      ? `Analyse this ${pageDataUrls.length}-page document and return the expected structured result. The pages are given below in order and form one single document.`
+      : 'Analyse this document and return the expected structured result.'
 
   let rawContent: string | null
   try {

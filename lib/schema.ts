@@ -65,11 +65,11 @@ export const ANALYSIS_JSON_SCHEMA = {
     'recommendation',
   ],
   properties: {
-    riskScore: { type: 'integer', description: 'Score de risque global de 0 à 100.' },
+    riskScore: { type: 'integer', description: 'Overall risk score from 0 to 100.' },
     riskLevel: { type: 'string', enum: ['LOW', 'MEDIUM', 'HIGH'] },
     detectedDocumentType: {
       type: 'string',
-      description: 'Type de document identifié, en français. Exemple : "Relevé bancaire".',
+      description: 'Identified document type, in English. Example: "Bank statement".',
     },
     extractedInformation: {
       type: 'array',
@@ -78,13 +78,13 @@ export const ANALYSIS_JSON_SCHEMA = {
         additionalProperties: false,
         required: ['label', 'value', 'confidence', 'page'],
         properties: {
-          label: { type: 'string', description: 'Nom du champ, en français.' },
+          label: { type: 'string', description: 'Field name, in English.' },
           value: { type: 'string' },
-          confidence: { type: 'number', description: 'Confiance de lecture entre 0 et 1.' },
+          confidence: { type: 'number', description: 'Reading confidence between 0 and 1.' },
           page: {
             type: 'integer',
             description:
-              'Numéro de la page où le champ est lu, à partir de 1, tel qu’annoncé avant chaque image.',
+              'Number of the page the field is read on, starting at 1, as announced before each image.',
           },
         },
       },
@@ -96,7 +96,7 @@ export const ANALYSIS_JSON_SCHEMA = {
         additionalProperties: false,
         required: ['id', 'title', 'description', 'severity', 'category'],
         properties: {
-          id: { type: 'string', description: 'Identifiant unique, format "sus-1", "sus-2".' },
+          id: { type: 'string', description: 'Unique identifier, format "sus-1", "sus-2".' },
           title: { type: 'string' },
           description: { type: 'string' },
           severity: { type: 'string', enum: ['LOW', 'MEDIUM', 'HIGH'] },
@@ -122,18 +122,18 @@ export const ANALYSIS_JSON_SCHEMA = {
         properties: {
           elementId: {
             type: 'string',
-            description: 'Doit correspondre à un id présent dans suspiciousElements.',
+            description: 'Must match an id present in suspiciousElements.',
           },
           page: {
             type: 'integer',
             description:
-              'Numéro de la page portant la zone, à partir de 1, tel qu’annoncé avant chaque image. Les coordonnées sont relatives à cette page.',
+              'Number of the page carrying the region, starting at 1, as announced before each image. Coordinates are relative to that page.',
           },
-          x: { type: 'number', description: 'Coin gauche, normalisé entre 0 et 1.' },
-          y: { type: 'number', description: 'Coin haut, normalisé entre 0 et 1.' },
-          width: { type: 'number', description: 'Largeur normalisée entre 0 et 1.' },
-          height: { type: 'number', description: 'Hauteur normalisée entre 0 et 1.' },
-          label: { type: 'string', description: 'Libellé court affiché sur la zone.' },
+          x: { type: 'number', description: 'Left edge, normalised between 0 and 1.' },
+          y: { type: 'number', description: 'Top edge, normalised between 0 and 1.' },
+          width: { type: 'number', description: 'Width, normalised between 0 and 1.' },
+          height: { type: 'number', description: 'Height, normalised between 0 and 1.' },
+          label: { type: 'string', description: 'Short label shown on the region.' },
         },
       },
     },

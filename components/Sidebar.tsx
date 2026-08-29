@@ -1,7 +1,7 @@
 // Les entrées autres que « Analyse » ne correspondent à aucune page : le
 // prototype ne conserve rien. Elles sont affichées désactivées plutôt que
 // masquées, pour montrer la direction produit sans proposer de lien mort.
-const UPCOMING = ['Documents', 'Historique', 'Rapports', 'Paramètres']
+const UPCOMING = ['Documents', 'History', 'Reports', 'Settings']
 
 export function Sidebar() {
   return (
@@ -25,7 +25,7 @@ export function Sidebar() {
         </div>
         <div>
           <p className="font-display text-[19px] leading-tight">DocShield AI</p>
-          <p className="text-[11px] leading-tight opacity-60">Contrôle documentaire</p>
+          <p className="text-[11px] leading-tight opacity-60">Document screening</p>
         </div>
       </div>
 
@@ -47,27 +47,26 @@ export function Sidebar() {
             <rect x="14" y="12" width="7" height="9" rx="2" />
             <rect x="3" y="16" width="7" height="5" rx="2" />
           </svg>
-          Analyse
+          Analysis
         </span>
 
         {UPCOMING.map((label) => (
           <span
             key={label}
             aria-disabled="true"
-            title="Non disponible dans ce prototype"
+            title="Not available in this prototype"
             className="flex cursor-not-allowed items-center justify-between rounded-full px-4 py-2.5 text-sm text-[var(--color-on-dark)]/35"
           >
             {label}
-            <span className="text-[10px] uppercase tracking-wide">bientôt</span>
+            <span className="text-[10px] uppercase tracking-wide">soon</span>
           </span>
         ))}
       </nav>
 
       <div className="mt-auto rounded-2xl bg-[var(--color-forest-soft)] px-4 py-3.5">
-        <p className="text-xs font-semibold">Aide à la décision</p>
+        <p className="text-xs font-semibold">Decision support</p>
         <p className="mt-1 text-[11px] leading-relaxed opacity-70">
-          L&apos;analyse est produite par un modèle et ne constitue ni une expertise ni une
-          preuve.
+          The analysis is produced by a model. It is neither an expert opinion nor proof.
         </p>
       </div>
     </aside>

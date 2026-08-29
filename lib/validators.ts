@@ -78,27 +78,49 @@ export function parseAmount(raw: string): number | null {
   return Number.isFinite(value) ? value : null
 }
 
+// Les deux langues, pour la même raison que les libellés : une date écrite en
+// toutes lettres est courante sur les pièces administratives, et un parseur
+// monolingue laisserait passer « 1 January 2026 » sans rien signaler.
 const MONTHS: Record<string, number> = {
   janvier: 1,
+  january: 1,
   fevrier: 2,
+  february: 2,
   mars: 3,
+  march: 3,
   avril: 4,
+  april: 4,
   mai: 5,
+  may: 5,
   juin: 6,
+  june: 6,
   juillet: 7,
+  july: 7,
   aout: 8,
+  august: 8,
   septembre: 9,
+  september: 9,
   octobre: 10,
+  october: 10,
   novembre: 11,
+  november: 11,
   decembre: 12,
+  december: 12,
 }
 
-// Trois écritures rencontrées sur les documents : aaaa-mm-jj, jj/mm/aaaa, et la
-// forme littérale « 1er janvier 2026 », courante sur les pièces administratives.
+// Les plus longs d'abord : sans cela, un nom dont un autre est le préfixe
+// serait tronqué par l'alternance.
+const MONTH_NAMES = Object.keys(MONTHS)
+  .sort((a, b) => b.length - a.length)
+  .join('|')
+
+// Quatre écritures rencontrées : aaaa-mm-jj, jj/mm/aaaa, « 1er janvier 2026 »
+// et la forme anglaise « January 1, 2026 ».
 const DATE_FORMS = new RegExp(
   '(\\d{4})[-/.](\\d{1,2})[-/.](\\d{1,2})' +
     '|(\\d{1,2})[-/.](\\d{1,2})[-/.](\\d{4})' +
-    `|(\\d{1,2})\\s*(?:er)?\\s+(${Object.keys(MONTHS).join('|')})\\s+(\\d{4})`,
+    `|(\\d{1,2})\\s*(?:er|st|nd|rd|th)?\\s+(${MONTH_NAMES})\\s+(\\d{4})` +
+    `|(${MONTH_NAMES})\\s+(\\d{1,2})(?:st|nd|rd|th)?,?\\s+(\\d{4})`,
   'g',
 )
 
@@ -119,8 +141,10 @@ function readDateParts(raw: string): DateParts[] {
       found.push({ year: +match[1], month: +match[2], day: +match[3] })
     } else if (match[4]) {
       found.push({ year: +match[6], month: +match[5], day: +match[4] })
-    } else {
+    } else if (match[7]) {
       found.push({ year: +match[9], month: MONTHS[match[8]], day: +match[7] })
+    } else {
+      found.push({ year: +match[12], month: MONTHS[match[10]], day: +match[11] })
     }
   }
 
@@ -189,30 +213,61 @@ export function isValidIce(raw: string): boolean {
   return /^\d{15}$/.test(raw.replace(/\D/g, ''))
 }
 
+// ------------------------------------------------------- reconnaissance des champs
+
+/**
+ * Libellés reconnus par les contrôles, dans les deux langues.
+ *
+ * Le prompt demande des libellés anglais, mais une pièce française peut en
+ * produire de français. Une expression monolingue rendrait tous les contrôles
+ * silencieusement inertes : aucune erreur, aucune anomalie, et une détection
+ * qui ne détecte plus rien. Les deux langues sont donc reconnues.
+ *
+ * Les motifs restent volontairement stricts. « tax » seul matcherait
+ * « Tax identifier », et le contrôle de TVA s'appliquerait à un numéro.
+ */
+const ICE_LABEL = /\bice\b/
+
+const HT_LABEL =
+  /total\s*ht|montant\s*ht|base\s*(hors\s*taxe|ht)|total\s*excl|amount\s*excl|net\s*amount|subtotal/
+const VAT_LABEL = /\btva\b|taxe\s*sur\s*la\s*valeur|\bvat\b|value\s*added\s*tax|sales\s*tax/
+const TTC_LABEL =
+  /total\s*ttc|montant\s*ttc|total\s*a\s*payer|net\s*a\s*payer|total\s*incl|grand\s*total|total\s*amount|amount\s*due/
+
+const DATE_LABEL =
+  /\bdate\b|echeance|validite|expiration|emission|delivrance|periode|valid|issued|expir|period/
+const ISSUE_LABEL =
+  /date.*(emission|delivrance|edition|factur)|date\s*du\s*document|issue\s*date|date\s*of\s*issue|issued\s*on|document\s*date/
+const DUE_LABEL = /echeance|date\s*limite|date\s*de\s*paiement|due\s*date|payment\s*due/
+const VALIDITY_LABEL = /validite|expiration|\bvalable\b|validity|valid\s*until|expir/
+
+const BANK_ACCOUNT_LABEL =
+  /\biban\b|\brib\b|bancaire|\bbanque\b|\bcompte\b|bank\s*account|account\s*number/
+
 // ------------------------------------------------------------------ contrôles
 
 function checkIce(fields: ExtractedField[]): RawFinding[] {
-  return findFields(fields, /\bice\b/)
+  return findFields(fields, ICE_LABEL)
     .filter((field) => /\d/.test(field.value))
     .filter((field) => !isValidIce(field.value))
     .map((field, index) => {
       const digits = field.value.replace(/\D/g, '').length
       return {
         id: `check-ice-${index + 1}`,
-        title: `Identifiant ICE non conforme — ${field.label}`,
+        title: `Non-conforming ICE identifier — ${field.label}`,
         description:
-          `Un ICE marocain comporte exactement 15 chiffres. La valeur lue « ${field.value} » ` +
-          `en contient ${digits}. À vérifier auprès de l'émetteur : il peut s'agir d'un ` +
-          `identifiant invalide comme d'une erreur de lecture du document.`,
+          `A Moroccan ICE has exactly 15 digits. The value read, "${field.value}", ` +
+          `has ${digits}. To be checked with the issuer: this may be an invalid ` +
+          `identifier as easily as a misreading of the document.`,
         category: 'COHERENCE_DONNEES' as const,
       }
     })
 }
 
 function checkVatArithmetic(fields: ExtractedField[]): RawFinding[] {
-  const ht = findField(fields, /total\s*ht|montant\s*ht|base\s*(hors\s*taxe|ht)/)
-  const vat = findField(fields, /\btva\b|taxe\s*sur\s*la\s*valeur/)
-  const ttc = findField(fields, /total\s*ttc|montant\s*ttc|total\s*a\s*payer|net\s*a\s*payer/)
+  const ht = findField(fields, HT_LABEL)
+  const vat = findField(fields, VAT_LABEL)
+  const ttc = findField(fields, TTC_LABEL)
 
   if (!ht || !vat || !ttc) return []
 
@@ -228,12 +283,12 @@ function checkVatArithmetic(fields: ExtractedField[]): RawFinding[] {
   return [
     {
       id: 'check-tva-1',
-      title: 'Total TTC incohérent avec le HT et la TVA',
+      title: 'Total including tax inconsistent with the net amount and VAT',
       description:
-        `${htValue.toLocaleString('fr-FR')} (HT) + ${vatValue.toLocaleString('fr-FR')} (TVA) ` +
-        `donne ${expected.toLocaleString('fr-FR')}, alors que le total indiqué est ` +
-        `${ttcValue.toLocaleString('fr-FR')}. Écart de ${gap.toLocaleString('fr-FR')}. ` +
-        `Vérifier les trois montants sur le document.`,
+        `${htValue.toLocaleString('en-US')} (net) + ${vatValue.toLocaleString('en-US')} (VAT) ` +
+        `gives ${expected.toLocaleString('en-US')}, while the stated total is ` +
+        `${ttcValue.toLocaleString('en-US')}. Difference of ${gap.toLocaleString('en-US')}. ` +
+        `Check all three amounts on the document.`,
       category: 'COHERENCE_DONNEES' as const,
     },
   ]
@@ -242,9 +297,6 @@ function checkVatArithmetic(fields: ExtractedField[]): RawFinding[] {
 // Libellés portant une information de temps. Comme pour l'IBAN, les contrôles
 // de date ne se déclenchent que si le libellé l'annonce : une référence de
 // dossier peut avoir la silhouette d'une date sans en être une.
-const DATE_LABEL = /\bdate\b|echeance|validite|expiration|emission|delivrance|periode/
-const ISSUE_LABEL = /date.*(emission|delivrance|edition|factur)|date\s*du\s*document/
-const VALIDITY_LABEL = /validite|expiration|\bvalable\b/
 
 const DAY_MS = 24 * 60 * 60 * 1000
 
@@ -253,11 +305,11 @@ function checkImpossibleDates(fields: ExtractedField[]): RawFinding[] {
     .filter((field) => hasImpossibleDate(field.value))
     .map((field, index) => ({
       id: `check-impossible-date-${index + 1}`,
-      title: `Date inexistante — ${field.label}`,
+      title: `Date that does not exist — ${field.label}`,
       description:
-        `La valeur lue « ${field.value} » ne correspond à aucun jour du calendrier. ` +
-        `Un document authentique ne porte pas une telle date. À confronter au ` +
-        `document : un chiffre mal lu produirait le même symptôme.`,
+        `The value read, "${field.value}", matches no day in the calendar. ` +
+        `A genuine document does not carry such a date. Compare against the ` +
+        `document: a misread digit would produce the same symptom.`,
       category: 'COHERENCE_DONNEES' as const,
     }))
 }
@@ -270,11 +322,11 @@ function checkPeriodOrder(fields: ExtractedField[]): RawFinding[] {
     .filter(({ dates }) => dates[0].getTime() > dates[dates.length - 1].getTime())
     .map(({ field }, index) => ({
       id: `check-period-${index + 1}`,
-      title: `Période qui se termine avant de commencer — ${field.label}`,
+      title: `Period ending before it begins — ${field.label}`,
       description:
-        `La valeur lue « ${field.value} » décrit une période dont la fin précède ` +
-        `le début. Cette combinaison est impossible sur un document authentique. ` +
-        `Vérifier les deux dates sur le document.`,
+        `The value read, "${field.value}", describes a period whose end precedes ` +
+        `its start. This combination is impossible on a genuine document. ` +
+        `Check both dates on the document.`,
       category: 'COHERENCE_DONNEES' as const,
     }))
 }
@@ -296,11 +348,11 @@ function checkValidityBeforeIssue(fields: ExtractedField[]): RawFinding[] {
   return [
     {
       id: 'check-validity-1',
-      title: 'Validité expirée avant la date d’émission',
+      title: 'Validity expiring before the issue date',
       description:
-        `Le document est daté du ${issued.value} et annonce une validité ` +
-        `« ${validity.value} », soit une expiration antérieure à sa propre émission. ` +
-        `Vérifier les deux champs sur le document.`,
+        `The document is dated ${issued.value} and states a validity of ` +
+        `"${validity.value}", which expires before its own issue date. ` +
+        `Check both fields on the document.`,
       category: 'COHERENCE_DONNEES' as const,
     },
   ]
@@ -320,11 +372,11 @@ function checkFutureIssue(fields: ExtractedField[], now: Date): RawFinding[] {
   return [
     {
       id: 'check-future-1',
-      title: 'Date d’émission postérieure à aujourd’hui',
+      title: 'Issue date later than today',
       description:
-        `Le document annonce une émission au ${issued.value}, soit une date à venir. ` +
-        `Un document ne peut pas avoir été émis dans le futur. Vérifier la date sur ` +
-        `le document.`,
+        `The document states an issue date of ${issued.value}, which is in the future. ` +
+        `A document cannot have been issued in the future. Check the date on the ` +
+        `document.`,
       category: 'COHERENCE_DONNEES' as const,
     },
   ]
@@ -338,8 +390,8 @@ const LEGAL_VAT_RATES = [0, 7, 10, 14, 20]
 const VAT_RATE_TOLERANCE = 0.5
 
 function checkVatRate(fields: ExtractedField[]): RawFinding[] {
-  const ht = findField(fields, /total\s*ht|montant\s*ht|base\s*(hors\s*taxe|ht)/)
-  const vat = findField(fields, /\btva\b|taxe\s*sur\s*la\s*valeur/)
+  const ht = findField(fields, HT_LABEL)
+  const vat = findField(fields, VAT_LABEL)
   if (!ht || !vat) return []
 
   const htValue = parseAmount(ht.value)
@@ -354,21 +406,21 @@ function checkVatRate(fields: ExtractedField[]): RawFinding[] {
   return [
     {
       id: 'check-tva-rate-1',
-      title: 'Taux de TVA hors barème',
+      title: 'VAT rate outside the statutory scale',
       description:
-        `${vatValue.toLocaleString('fr-FR')} de TVA sur ${htValue.toLocaleString('fr-FR')} ` +
-        `hors taxes donne un taux de ${rate.toLocaleString('fr-FR', {
+        `${vatValue.toLocaleString('en-US')} of VAT on a net amount of ` +
+        `${htValue.toLocaleString('en-US')} gives a rate of ${rate.toLocaleString('en-US', {
           maximumFractionDigits: 2,
-        })} %, qui ne correspond à aucun taux en vigueur (0, 7, 10, 14 ou 20 %). ` +
-        `Vérifier les deux montants sur le document.`,
+        })}%, which matches no statutory rate (0, 7, 10, 14 or 20%). ` +
+        `Check both amounts on the document.`,
       category: 'COHERENCE_DONNEES' as const,
     },
   ]
 }
 
 function checkDates(fields: ExtractedField[]): RawFinding[] {
-  const issued = findField(fields, /date.*(factur|emission|edition)|date\s*du\s*document/)
-  const due = findField(fields, /echeance|date\s*limite|date\s*de\s*paiement/)
+  const issued = findField(fields, ISSUE_LABEL)
+  const due = findField(fields, DUE_LABEL)
 
   if (!issued || !due) return []
 
@@ -380,11 +432,11 @@ function checkDates(fields: ExtractedField[]): RawFinding[] {
   return [
     {
       id: 'check-dates-1',
-      title: "Date d'échéance antérieure à la date d'émission",
+      title: 'Due date earlier than the issue date',
       description:
-        `Le document est daté du ${issued.value} et porte une échéance au ${due.value}, ` +
-        `soit une échéance antérieure à son émission. Cette combinaison est impossible ` +
-        `sur un document authentique.`,
+        `The document is dated ${issued.value} and carries a due date of ${due.value}, ` +
+        `which falls before its issue date. This combination is impossible on a ` +
+        `genuine document.`,
       category: 'COHERENCE_DONNEES' as const,
     },
   ]
@@ -408,7 +460,6 @@ function looksLikeIban(value: string): boolean {
  * échappe désormais au contrôle. Sur un outil de pré-contrôle, accuser à tort
  * un vrai document coûte plus cher que laisser passer une vérification.
  */
-const BANK_ACCOUNT_LABEL = /\biban\b|\brib\b|bancaire|\bbanque\b|\bcompte\b/
 
 /**
  * Libellés dont la valeur doit être la même sur toutes les pages d'un document.
@@ -419,7 +470,7 @@ const BANK_ACCOUNT_LABEL = /\biban\b|\brib\b|bancaire|\bbanque\b|\bcompte\b/
  * sur le certificat ISO : signaler une variation normale comme une anomalie.
  */
 const CONSTANT_ACROSS_PAGES =
-  /numero\s*(de\s*)?(facture|dossier|certificat|reference|compte)|^reference\b|titulaire|beneficiaire|\bice\b|\biban\b|\brib\b|emetteur/
+  /numero\s*(de\s*)?(facture|dossier|certificat|reference|compte)|^reference\b|titulaire|beneficiaire|emetteur|(invoice|certificate|file|reference|account)\s*(number|no\b)|account\s*holder|\bholder\b|beneficiary|issuer|\bice\b|\biban\b|\brib\b/
 
 /** Réduit une valeur à ce qui doit être comparé : ni casse, ni accents, ni ponctuation. */
 function comparable(raw: string): string {
@@ -441,16 +492,16 @@ function checkCrossPageConsistency(fields: ExtractedField[]): RawFinding[] {
     if (new Set(group.map((field) => comparable(field.value))).size < 2) continue
 
     const seen = group
-      .map((field) => `« ${field.value} » page ${field.page}`)
+      .map((field) => `"${field.value}" on page ${field.page}`)
       .join(', ')
 
     findings.push({
       id: `check-crosspage-${findings.length + 1}`,
-      title: `Valeur différente d'une page à l'autre — ${group[0].label}`,
+      title: `Value differing from one page to another — ${group[0].label}`,
       description:
-        `Ce champ devrait porter la même valeur sur tout le document. Les pages ` +
-        `analysées donnent : ${seen}. Un identifiant qui change en cours de ` +
-        `document est une incohérence majeure. Confronter les pages entre elles.`,
+        `This field should carry the same value throughout the document. The pages ` +
+        `analysed give: ${seen}. An identifier that changes mid-document is a major ` +
+        `inconsistency. Compare the pages against each other.`,
       category: 'COHERENCE_DONNEES' as const,
     })
   }
@@ -464,11 +515,11 @@ function checkIban(fields: ExtractedField[]): RawFinding[] {
     .filter((field) => !isValidIban(field.value))
     .map((field, index) => ({
       id: `check-iban-${index + 1}`,
-      title: `Clé de contrôle IBAN invalide — ${field.label}`,
+      title: `Invalid IBAN check key — ${field.label}`,
       description:
-        `La valeur lue « ${field.value} » ne satisfait pas la clé de contrôle mod-97 de la ` +
-        `norme IBAN. Un IBAN authentique la vérifie toujours. À confronter au document : ` +
-        `un seul chiffre mal lu suffit à faire échouer ce contrôle.`,
+        `The value read, "${field.value}", fails the mod-97 check key of the IBAN ` +
+        `standard. A genuine IBAN always satisfies it. Compare against the document: ` +
+        `a single misread digit is enough to fail this check.`,
       category: 'COHERENCE_DONNEES' as const,
     }))
 }
@@ -542,14 +593,14 @@ function scoreFloor(findings: Finding[]): number {
 function summarizeChecks(findings: SuspiciousElement[]): string {
   if (findings.length === 0) {
     return (
-      'Contrôles automatiques : aucun écart relevé sur les champs vérifiables ' +
-      '(identifiant ICE, clé IBAN, arithmétique et taux de TVA, existence et ' +
-      'cohérence des dates).'
+      'Automatic checks: no discrepancy found on the verifiable fields ' +
+      '(ICE identifier, IBAN key, VAT arithmetic and rate, existence and ' +
+      'coherence of dates).'
     )
   }
 
-  const count = `${findings.length} point${findings.length > 1 ? 's' : ''} à vérifier`
-  return `Contrôles automatiques : ${count} — ${findings.map((f) => f.title).join(' ; ')}.`
+  const count = `${findings.length} point${findings.length > 1 ? 's' : ''} to check`
+  return `Automatic checks: ${count} — ${findings.map((f) => f.title).join('; ')}.`
 }
 
 /**
@@ -582,7 +633,7 @@ export function consolidateAnalysis(result: AnalysisResult): AnalysisResult {
       ...recommendation,
       nextSteps: [
         ...recommendation.nextSteps,
-        'Confronter au document original les points relevés par les contrôles automatiques.',
+        'Compare the points raised by the automatic checks against the original document.',
       ],
     }
   }
@@ -613,7 +664,7 @@ export function consolidateAnalysis(result: AnalysisResult): AnalysisResult {
     riskScore,
     riskLevel: riskLevelFromScore(riskScore),
     suspiciousElements: [...result.suspiciousElements, ...findings],
-    explanation: `Analyse visuelle : ${result.explanation.trim()}\n\n${summarizeChecks(findings)}`,
+    explanation: `Visual analysis: ${result.explanation.trim()}\n\n${summarizeChecks(findings)}`,
     recommendation,
   }
 }

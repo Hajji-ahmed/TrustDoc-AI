@@ -32,7 +32,7 @@ export async function POST(request: Request) {
   try {
     payload = await request.json()
   } catch {
-    return errorResponse('INVALID_REQUEST', 'La requête envoyée est illisible.', 400)
+    return errorResponse('INVALID_REQUEST', 'The request could not be read.', 400)
   }
 
   const pages = (payload as { pages?: unknown })?.pages
@@ -42,7 +42,7 @@ export async function POST(request: Request) {
   if (!Array.isArray(pages) || pages.length === 0 || !pages.every(isImageDataUrl)) {
     return errorResponse(
       'INVALID_REQUEST',
-      "Aucune image de document exploitable n'a été reçue.",
+      'No usable document image was received.',
       400,
     )
   }
@@ -52,7 +52,7 @@ export async function POST(request: Request) {
   if (pages.length > MAX_ANALYZED_PAGES) {
     return errorResponse(
       'INVALID_REQUEST',
-      `Une analyse porte sur ${MAX_ANALYZED_PAGES} pages au maximum.`,
+      `An analysis covers at most ${MAX_ANALYZED_PAGES} pages.`,
       400,
     )
   }
@@ -64,7 +64,7 @@ export async function POST(request: Request) {
     const parsed = analysisResultSchema.safeParse(buildMockAnalysis())
     if (!parsed.success) {
       console.error('[analyze] jeu de démonstration invalide', parsed.error.issues)
-      return errorResponse('INVALID_MODEL_OUTPUT', 'Le jeu de démonstration est invalide.', 500)
+      return errorResponse('INVALID_MODEL_OUTPUT', 'The demo data set is invalid.', 500)
     }
     return respondWithResult(consolidateAnalysis(parsed.data), 'demo')
   }
@@ -77,7 +77,7 @@ export async function POST(request: Request) {
       console.error('[analyze] sortie du modèle invalide :', cause.message)
       return errorResponse(
         'INVALID_MODEL_OUTPUT',
-        "L'analyse produite n'est pas exploitable. Relancez l'analyse du document.",
+        'The analysis produced is not usable. Run the document analysis again.',
         502,
       )
     }
@@ -85,7 +85,7 @@ export async function POST(request: Request) {
     console.error("[analyze] échec de l'appel au fournisseur :", cause)
     return errorResponse(
       'UPSTREAM_FAILURE',
-      "Le service d'analyse est momentanément indisponible. Réessayez dans quelques instants.",
+      'The analysis service is temporarily unavailable. Try again shortly.',
       502,
     )
   }
