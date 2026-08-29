@@ -129,7 +129,7 @@ doit être plus fiable''}: the concern was the reliability of the risk score, no
 the reading of the document.
 \end{note}
 
-\shot{assets/feedback-000.png}{Feedback received from Aissam EN-NAHEL (TecForge), reproduced verbatim.}
+\shot{assets/feedback-tecforge.png}{Feedback received from Aissam EN-NAHEL (TecForge), reproduced verbatim.}
 
 \vspace{2pt}
 \noindent
@@ -244,12 +244,71 @@ requires re-running his own two-page file. Until that is done, this defect is
 fixed in the pipeline and unproven in the result.
 \end{badbox}
 
-%% ------------------------------------------------------ 4
-% Le tableau à remplir et la synthèse ouvrent une page à eux : laissés à la
-% suite, ils coupaient la section 5 entre deux pages et laissaient la
-% checklist seule sur la dernière.
 \newpage
-\heading{4.}{Validation register}
+
+%% ------------------------------------------------------ 4
+\heading{4.}{Second external validation --- Managov}
+
+\vspace{2pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{26mm}
+                  >{\raggedright\arraybackslash}p{\dimexpr\linewidth-33mm}@{}}
+\rowcolor{zebra}\textbf{\color{navy}Company} & Managov \\[3pt]
+\textbf{\color{navy}Reviewer} & Abdelkrim Zrouli, Director --- written feedback,
+28 August 2026 \\[3pt]
+\rowcolor{zebra}\textbf{\color{navy}Material} & A synthetic test pack he built
+himself: Document A, a coherent administrative attestation, and Document B, the
+same document with its issue date made inconsistent with its validity period. \\[3pt]
+\textbf{\color{navy}Method} & Unprompted assessment of the concept, followed by
+a controlled A/B test on a matched pair of documents. \\
+\end{tabular}
+
+\vspace{6pt}
+\begin{note}{Assessment}
+\emph{``DocShield AI répond à un besoin réel de pré-contrôle documentaire.''}
+The combination of AI analysis, confidence score, anomaly detection and
+recommendation was judged relevant, the interface simple and intuitive, and the
+project promising for public administrations, educational institutions and
+companies.
+\end{note}
+
+\shot{assets/feedback-managov.png}{Feedback received from Abdelkrim Zrouli (Managov), reproduced verbatim.}
+
+\vspace{2pt}
+\begin{note}{The reservation, and why it matters more than the praise}
+\emph{``Le principal enjeu sera de démontrer la fiabilité des résultats et de
+bien distinguer détection d'anomalies et preuve d'authenticité.''}
+
+\vspace{3pt}
+This is the product's own founding constraint, stated back by someone who had
+not been told it. DocShield never claims a document is authentic; it reports
+what looks irregular and hands the decision to a human. Hearing that boundary
+named as \emph{the} central challenge, by a director evaluating the tool for his
+own organisation, confirms that the distinction is not academic --- it is what
+buyers will judge the product on.
+\end{note}
+
+\vspace{4pt}
+\begin{badbox}{Test designed better than ours --- and not yet scored}
+Document A and Document B differ by one controlled variable: an inconsistency
+between issue date and validity period. That is a cleaner experiment than
+anything run in-house, because it isolates a single failure mode and provides
+its own control.
+
+\vspace{3pt}
+The two result screenshots did not render in the received message, so the
+outcome of this A/B test is \textbf{not documented here}. Reporting it from
+memory or inference would defeat the purpose of an evidence document. The
+result is being requested from the reviewer, and the pair will be re-run against
+the corrected prototype in either case.
+\end{badbox}
+
+\newpage
+
+%% ------------------------------------------------------ 5
+% Le tableau à remplir et la synthèse ouvrent une page à eux : laissés à la
+% suite, ils coupaient la section finale entre deux pages et laissaient la
+% checklist seule sur la dernière.
+\heading{5.}{Validation register}
 
 One line per company contacted during the challenge. Only verified
 conversations and real feedback are recorded here; the blank rows are reserved
@@ -273,32 +332,45 @@ relying on the document's own contact details. &
 All four defects corrected and deployed within the challenge window.
 Next: retest the altered two-page invoice, then extend testing to other
 document families. \\ \hline
-\rule{0pt}{16mm} & & & \\ \hline
+Managov &
+Abdelkrim Zrouli\newline \textit{Director} &
+Concept and interface judged relevant for administrations, schools and
+companies. Central challenge named: demonstrating the reliability of results,
+and keeping anomaly detection clearly distinct from proof of authenticity. Ran
+a matched pair of synthetic documents differing by one falsified date. &
+Positioning confirmed and kept explicit in the interface. Next: obtain the two
+result screenshots, then re-run the pair against the corrected prototype.
+\\ \hline
 \rule{0pt}{16mm} & & & \\ \hline
 \rule{0pt}{16mm} & & & \\ \hline
 \rule{0pt}{16mm} & & & \\ \hline
 \end{tabular}
 
-%% ------------------------------------------------------ 5
-\heading{5.}{Summary and evidence checklist}
+%% ------------------------------------------------------ 6
+\heading{6.}{Summary and evidence checklist}
 
-\fld{Completed} One external company, one detailed tester, three documents, four
-defects found and four corrections shipped within the challenge window.
+\fld{Completed} Two external companies, two reviewers --- one HR practitioner
+and one director --- five documents tested, four defects found and four
+corrections shipped within the challenge window.
+
+\fld{Confirmed from outside} The boundary the product was built on --- report
+anomalies, never certify authenticity --- was independently named as the central
+challenge by the second reviewer, who had not been told it.
 
 \fld{Highest-priority correction} Detecting inconsistencies between pages of the
-same document --- shipped, awaiting retest on the tester's file.
+same document --- shipped, awaiting retest on the reviewers' own files.
 
-\fld{Next step} Re-run the altered two-page invoice, then widen testing to the
-companies listed above.
+\fld{Next step} Obtain the Managov result screenshots, re-run both the altered
+two-page invoice and the A/B pair, then widen testing further.
 
 \vspace{6pt}
 \begin{note}{Evidence checklist}
-\yes TecForge feedback captured, reproduced verbatim\\
-\yes Screenshot evidence included\\
+\yes Two companies contacted, both replied with written feedback\\
+\yes Both messages captured and reproduced verbatim\\
 \yes Root cause identified in code for all four defects\\
 \yes Corrections implemented and deployed, published in the project repository\\
-\no Retest of the two-page invoice with the corrected prototype\\
-\no Additional companies, feedback and resulting changes
+\no Managov A/B test results --- screenshots did not render in the message\\
+\no Retest of the two-page invoice and of the A/B pair with the corrected prototype
 \end{note}
 
 \vspace{4pt}
