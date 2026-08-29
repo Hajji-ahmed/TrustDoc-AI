@@ -70,6 +70,9 @@
 \newcommand{\fld}[1]{\textbf{\color{navy}#1}\hspace{5pt}}
 \newcommand{\shipped}{{\footnotesize\color{good}\bfseries SHIPPED}}
 \newcommand{\open}{{\footnotesize\color{bad}\bfseries TO RETEST}}
+% \partial est une commande mathématique de LaTeX : le statut porte un autre nom.
+\newcommand{\partly}{{\footnotesize\color{muted}\bfseries PARTIAL}}
+\newcommand{\notbuilt}{{\footnotesize\color{bad}\bfseries NOT BUILT}}
 
 %% ------------------------------------------------------ capture d'écran
 \newcommand{\shotwidth}{0.94\linewidth}
@@ -367,10 +370,109 @@ the single most useful next step in this dossier.
 \newpage
 
 %% ------------------------------------------------------ 5
+\heading{5.}{Third external validation --- INKWAY}
+
+\vspace{2pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{26mm}
+                  >{\raggedright\arraybackslash}p{\dimexpr\linewidth-33mm}@{}}
+\rowcolor{zebra}\textbf{\color{navy}Company} & INKWAY \\[3pt]
+\textbf{\color{navy}Reviewer} & Chaimae EL OUAZZANI, Project Manager --- written
+feedback, 29 August 2026 \\[3pt]
+\rowcolor{zebra}\textbf{\color{navy}Material} & No document test. An assessment of
+the product direction, given once the current scope had been explained. \\[3pt]
+\textbf{\color{navy}Method} & Unprompted review, returned as eight numbered
+proposals, each with the operational situation it would serve. \\
+\end{tabular}
+
+\vspace{6pt}
+\begin{note}{Where the idea earns its place}
+The concept was judged useful \emph{``surtout si elle est appliquée à des
+situations où les organisations doivent contrôler beaucoup de documents en peu
+de temps''}. Volume under time pressure is the qualifying condition --- the
+second reviewer to reach that criterion independently, and the same reasoning
+that put lending and leasing at the head of deliverable 04.
+\end{note}
+
+%% ------------------------------------------------------ 5.1
+\heading{5.1}{The eight proposals, against what exists}
+
+Recorded as a roadmap rather than a wish list, each measured against the
+prototype as it stands today.
+
+\vspace{3pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{52mm}
+                  >{\raggedright\arraybackslash}p{\dimexpr\linewidth-87mm}
+                  >{\raggedright\arraybackslash}p{25mm}@{}}
+\rowcolor{zebra}\textbf{\color{navy}Proposed} & \textbf{\color{navy}Against the prototype} &
+\textbf{\color{navy}Status} \\[3pt]
+Diplomas and certificates: QR code, certificate number, issuing body &
+Internal coherence is checked. Reading a QR code and looking up an issuer are
+not. & \notbuilt \\[3pt]
+\rowcolor{zebra}Reference attestations: dates, amounts, companies, existence of
+the issuer &
+Dates and arithmetic are checked. Confirming that the issuer exists requires an
+external source. & \partly \\[3pt]
+Comparison against known document templates &
+The model judges plausibility, never conformity to a reference model. It has no
+template to compare with. & \notbuilt \\[3pt]
+\rowcolor{zebra}Change of bank details or other sensitive fields &
+The IBAN check key is verified. Detecting a \emph{change} requires knowing the
+supplier's usual details --- a history the tool does not keep. & \partly \\[3pt]
+Signatures and stamps: copied, pasted, added after the fact &
+The model is asked to inspect seals and signatures visually. No forensic
+analysis. & \partly \\[3pt]
+\rowcolor{zebra}Metadata and file history &
+Excluded by construction: the document is rasterised before analysis, so
+metadata never reaches the model. & \notbuilt \\[3pt]
+Cross-checking several documents of one file &
+Cross-\emph{page} comparison within a single document ships today. Cross-%
+\emph{document} does not. & \partly \\[3pt]
+\rowcolor{zebra}Connection to external sources &
+Not built. This is the boundary the second reviewer named, reached here from a
+different direction. & \notbuilt \\
+\end{tabular}
+
+\vspace{5pt}
+\begin{note}{The reframing, which matters more than any single item}
+\emph{``Ne pas seulement analyser si le document a l'air correct, mais aider une
+organisation à sécuriser une décision réelle''} --- awarding a contract, granting
+credit, hiring, paying a supplier, settling a claim.
+
+\vspace{3pt}
+That moves the unit of value from the document to the decision it supports. Six
+of the eight proposals follow from it: they are not detection features, they are
+what a reviewer needs before signing. It also explains why external sources
+recur --- a decision cannot be secured by a document vouching for itself.
+\end{note}
+
+\vspace{4pt}
+\fld{On the interface} The reviewer would replace any wording suggesting
+\emph{authentic} with \emph{low risk / to be checked / high risk}, plus the
+precise reason for the flag. The risk badge already reads that way; the
+recommendation label \emph{``Document acceptable''} does not, and still implies
+a verdict on authenticity. Small change, and directly on the boundary all three
+reviewers have now named.
+
+\vspace{5pt}
+\begin{note}{What three independent reviews converge on}
+An HR practitioner, a company director and a project manager, none aware of the
+others' feedback, arrived at the same boundary from three directions: the score
+must be trustworthy, detection must stay distinct from proof, and the interface
+must never say \emph{authentic}.
+
+\vspace{3pt}
+No reviewer asked for more detection categories. All three asked for the product
+to be honest about what it does not establish. That is the clearest product
+signal the challenge produced.
+\end{note}
+
+\newpage
+
+%% ------------------------------------------------------ 6
 % Le tableau à remplir et la synthèse ouvrent une page à eux : laissés à la
 % suite, ils coupaient la section finale entre deux pages et laissaient la
 % checklist seule sur la dernière.
-\heading{5.}{Validation register}
+\heading{6.}{Validation register}
 
 One line per company contacted during the challenge. Only verified
 conversations and real feedback are recorded here; the blank rows are reserved
@@ -404,22 +506,33 @@ the altered document was correctly flagged. &
 Positioning confirmed and kept explicit in the interface. Detection validated on
 the altered document. Next: run the control document to confirm no false
 positive is raised. \\ \hline
-\rule{0pt}{16mm} & & & \\ \hline
+\rowcolor{zebra}
+INKWAY &
+Chaimae EL OUAZZANI\newline \textit{Project Manager} &
+Concept judged useful where organisations must check many documents under time
+pressure. Eight proposals returned, each tied to an operational situation, all
+pointing the same way: secure a decision, not score a document. Would drop any
+wording suggesting authenticity in favour of a risk level with its reason. &
+Proposals recorded against the current state as a roadmap. Interface wording to
+revise. Volume under time pressure confirmed as the qualifying condition.
+\\ \hline
 \rule{0pt}{16mm} & & & \\ \hline
 \rule{0pt}{16mm} & & & \\ \hline
 \end{tabular}
 
 %% ------------------------------------------------------ 6
-\heading{6.}{Summary and evidence checklist}
+\heading{7.}{Summary and evidence checklist}
 
-\fld{Completed} Two external companies, two reviewers --- one HR practitioner
-and one director --- seven documents tested, four defects found and four
-corrections shipped within the challenge window.
+\fld{Completed} Three external companies, three reviewers --- an HR
+practitioner, a company director and a project manager --- seven documents
+tested, four defects found and four corrections shipped within the challenge
+window.
 
 \fld{Confirmed from outside} The boundary the product was built on --- report
-anomalies, never certify authenticity --- was independently named as the central
-challenge by the second reviewer, who had not been told it. Two of the
-corrections made after the first validation are visible in his test output.
+anomalies, never certify authenticity --- was reached independently by all three
+reviewers, none of them told it and none aware of the others. Two of the
+corrections made after the first validation are visible in the second reviewer's
+test output. No reviewer asked for more detection categories.
 
 \fld{Detection demonstrated} On a falsification designed by a third party, the
 prototype isolated the planted defect, named it correctly and localised it on
@@ -434,11 +547,12 @@ and the only one that turns the current evidence into a complete result.
 
 \vspace{6pt}
 \begin{note}{Evidence checklist}
-\yes Two companies contacted, both replied with written feedback\\
-\yes Both messages captured and reproduced verbatim\\
+\yes Three companies contacted, all three replied with written feedback\\
 \yes Root cause identified in code for all four defects\\
 \yes Corrections implemented and deployed, published in the project repository\\
 \yes Detection confirmed on a third party's falsified document\\
+\yes Eight product proposals recorded against the current state\\
+\no Third message not yet captured as a screenshot\\
 \no Control document not scored --- absence of false positives unverified\\
 \no Retest of the two-page invoice with the corrected prototype
 \end{note}
