@@ -579,6 +579,50 @@ function scoreFloor(findings: Finding[]): number {
   return floor
 }
 
+/**
+ * Score d'un document sur lequel rien n'a été relevé.
+ *
+ * Il n'est jamais nul, et il n'est pas arbitraire : il suit la qualité de
+ * lecture. Un document lu à 60 % n'a pas été contrôlé aussi sérieusement qu'un
+ * document net — les contrôles se sont appliqués à des valeurs incertaines. Le
+ * chiffre dit donc quelque chose de vrai sur la portée du contrôle, au lieu de
+ * prétendre mesurer une authenticité que l'outil ne sait pas établir.
+ *
+ * Les trois paliers restent dans la bande « risque faible » : ne rien avoir
+ * trouvé ne doit jamais ressembler à un signalement.
+ */
+const RESIDUAL_CONFIDENT = 5
+const RESIDUAL_PROBABLE = 10
+const RESIDUAL_UNCERTAIN = 15
+
+function residualScore(fields: ExtractedField[]): number {
+  // Aucun champ lu : le contrôle n'a porté sur rien de vérifiable.
+  if (fields.length === 0) return RESIDUAL_UNCERTAIN
+
+  const average =
+    fields.reduce((total, field) => total + field.confidence, 0) / fields.length
+  if (average >= 0.9) return RESIDUAL_CONFIDENT
+  if (average >= 0.75) return RESIDUAL_PROBABLE
+  return RESIDUAL_UNCERTAIN
+}
+
+/** Sans cette phrase, le résiduel redevient un chiffre que rien n'explique. */
+function residualNote(score: number): string {
+  const reason =
+    score === RESIDUAL_CONFIDENT
+      ? 'the document was read with high confidence'
+      : score === RESIDUAL_PROBABLE
+        ? 'parts of the document were read with moderate confidence'
+        : 'the document was read with low confidence, or no field could be extracted'
+
+  return (
+    `Residual score: ${score}/100. No anomaly was found and ${reason}. ` +
+    'This score is never zero: screening detects inconsistency, not falsity. ' +
+    'A document that is entirely fabricated but coherent with itself passes ' +
+    'every check here, and authenticity can only be established with the issuer.'
+  )
+}
+
 // ------------------------------------------------------------- consolidation
 
 /**
@@ -647,24 +691,37 @@ export function consolidateAnalysis(result: AnalysisResult): AnalysisResult {
     riskScore = Math.max(riskScore, 34)
   }
 
-  // Chaque point du score doit être traçable à un constat affiché. Un modèle
-  // renvoyant 20 sur un document où ni lui ni les contrôles n'ont rien trouvé
-  // produit un chiffre que le relecteur ne peut ni vérifier ni expliquer.
+  // Un document sans anomalie n'obtient pas zéro.
   //
-  // La remise à zéro exige que le verdict soit lui aussi « acceptable » : si le
-  // modèle recommande une vérification sans avoir formalisé d'anomalie, son
-  // avertissement est conservé par les planchers ci-dessus.
+  // Zéro se lit comme un certificat de conformité, et l'outil ne certifie rien :
+  // il détecte une incohérence, pas une fausseté. Un document entièrement
+  // inventé mais cohérent avec lui-même traverse tous les contrôles — un
+  // relecteur externe l'a constaté sur une attestation non authentique affichée
+  // à 0/100. Le score résiduel dit ce que le contrôle n'a pas pu écarter.
+  //
+  // Il reste conditionné à un verdict « acceptable » : si le modèle recommande
+  // une vérification sans avoir formalisé d'anomalie, son avertissement est
+  // conservé par les planchers ci-dessus.
   const nothingFound = findings.length === 0 && result.suspiciousElements.length === 0
-  if (nothingFound && recommendation.action === 'ACCEPTER') {
-    riskScore = 0
+  const clear = nothingFound && recommendation.action === 'ACCEPTER'
+  if (clear) {
+    riskScore = residualScore(result.extractedInformation)
   }
+
+  const explanation = [
+    `Visual analysis: ${result.explanation.trim()}`,
+    summarizeChecks(findings),
+    clear ? residualNote(riskScore) : null,
+  ]
+    .filter((part): part is string => part !== null)
+    .join('\n\n')
 
   return {
     ...result,
     riskScore,
     riskLevel: riskLevelFromScore(riskScore),
     suspiciousElements: [...result.suspiciousElements, ...findings],
-    explanation: `Visual analysis: ${result.explanation.trim()}\n\n${summarizeChecks(findings)}`,
+    explanation,
     recommendation,
   }
 }
