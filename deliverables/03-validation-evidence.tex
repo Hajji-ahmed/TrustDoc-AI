@@ -65,8 +65,6 @@
 \newcommand{\heading}[2]{%
   \par\vspace{8pt}{\color{navy}\bfseries #1\hspace{6pt}#2}\par\vspace{-3pt}}
 
-\newcommand{\yes}{\textcolor{good}{\small$\checkmark$}~}
-\newcommand{\no}{\textcolor{bad}{\small$\times$}~}
 \newcommand{\fld}[1]{\textbf{\color{navy}#1}\hspace{5pt}}
 \newcommand{\shipped}{{\footnotesize\color{good}\bfseries SHIPPED}}
 \newcommand{\open}{{\footnotesize\color{bad}\bfseries TO RETEST}}
@@ -546,18 +544,6 @@ validation has not been re-run.
 
 \fld{Next step} Run Document A, the control. It is the cheapest test remaining
 and the only one that turns the current evidence into a complete result.
-
-\vspace{6pt}
-\begin{note}{Evidence checklist}
-\yes Three companies contacted, all three replied with written feedback\\
-\yes All three messages captured and reproduced verbatim\\
-\yes Root cause identified in code for all four defects\\
-\yes Corrections implemented and deployed, published in the project repository\\
-\yes Detection confirmed on a third party's falsified document\\
-\yes Eight product proposals recorded against the current state\\
-\no Control document not scored --- absence of false positives unverified\\
-\no Retest of the two-page invoice with the corrected prototype
-\end{note}
 
 
 \end{document}
