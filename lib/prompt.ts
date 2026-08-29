@@ -30,7 +30,8 @@ Nomme donc chaque champ par ce qu'il est réellement, en français, et n'emploie
 - « IBAN », « RIB », « Numéro de compte bancaire » : uniquement des coordonnées de compte bancaire.
 - « ICE » : uniquement l'identifiant commun de l'entreprise marocain, à 15 chiffres.
 - « Total HT », « TVA », « Total TTC » : uniquement des montants, écrits tels qu'ils figurent sur le document.
-- « Date d'émission », « Date d'échéance » : uniquement des dates.
+- « Date d'émission », « Date de délivrance », « Date d'échéance » : uniquement des dates.
+- « Période concernée », « Validité » : uniquement des intervalles de temps, en conservant les deux bornes telles qu'elles sont écrites (« du 1er janvier 2026 au 31 décembre 2026 », « jusqu'au 31 décembre 2026 »).
 
 Pour tout le reste, emploie un libellé descriptif et sans ambiguïté : « Numéro de certificat », « Numéro de facture », « Référence du dossier », « Organisme certificateur », « Période de validité ». En cas d'hésitation entre deux libellés, choisis le plus neutre : un champ mal nommé vaut moins qu'un champ non contrôlé.
 

@@ -59,19 +59,88 @@ export function parseAmount(raw: string): number | null {
   return Number.isFinite(value) ? value : null
 }
 
-/** Lit une date au format jj/mm/aaaa ou aaaa-mm-jj. */
+const MONTHS: Record<string, number> = {
+  janvier: 1,
+  fevrier: 2,
+  mars: 3,
+  avril: 4,
+  mai: 5,
+  juin: 6,
+  juillet: 7,
+  aout: 8,
+  septembre: 9,
+  octobre: 10,
+  novembre: 11,
+  decembre: 12,
+}
+
+// Trois écritures rencontrées sur les documents : aaaa-mm-jj, jj/mm/aaaa, et la
+// forme littérale « 1er janvier 2026 », courante sur les pièces administratives.
+const DATE_FORMS = new RegExp(
+  '(\\d{4})[-/.](\\d{1,2})[-/.](\\d{1,2})' +
+    '|(\\d{1,2})[-/.](\\d{1,2})[-/.](\\d{4})' +
+    `|(\\d{1,2})\\s*(?:er)?\\s+(${Object.keys(MONTHS).join('|')})\\s+(\\d{4})`,
+  'g',
+)
+
+interface DateParts {
+  year: number
+  month: number
+  day: number
+}
+
+function readDateParts(raw: string): DateParts[] {
+  const text = normalize(raw)
+  const found: DateParts[] = []
+  DATE_FORMS.lastIndex = 0
+
+  let match: RegExpExecArray | null
+  while ((match = DATE_FORMS.exec(text)) !== null) {
+    if (match[1]) {
+      found.push({ year: +match[1], month: +match[2], day: +match[3] })
+    } else if (match[4]) {
+      found.push({ year: +match[6], month: +match[5], day: +match[4] })
+    } else {
+      found.push({ year: +match[9], month: MONTHS[match[8]], day: +match[7] })
+    }
+  }
+
+  return found
+}
+
+/**
+ * Construit la date, ou null si elle n'existe pas.
+ *
+ * new Date(2026, 1, 31) ne lève pas : il renvoie le 2 mars. Sans cette
+ * relecture, un « 31 février » — l'un des indices de falsification les plus
+ * simples à repérer — serait normalisé en date valide avant d'atteindre le
+ * moindre contrôle.
+ */
+function toDate(parts: DateParts): Date | null {
+  const date = new Date(parts.year, parts.month - 1, parts.day)
+  const faithful =
+    date.getFullYear() === parts.year &&
+    date.getMonth() === parts.month - 1 &&
+    date.getDate() === parts.day
+  return faithful ? date : null
+}
+
+/** Toutes les dates lisibles d'une valeur, dans leur ordre d'apparition. */
+export function parseDates(raw: string): Date[] {
+  return readDateParts(raw)
+    .map(toDate)
+    .filter((date): date is Date => date !== null)
+}
+
+/** Première date lisible de la valeur, ou null. */
 export function parseDate(raw: string): Date | null {
-  const ymd = raw.match(/(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})/)
-  if (ymd) {
-    return new Date(Number(ymd[1]), Number(ymd[2]) - 1, Number(ymd[3]))
-  }
+  return parseDates(raw)[0] ?? null
+}
 
-  const dmy = raw.match(/(\d{1,2})[-/.](\d{1,2})[-/.](\d{4})/)
-  if (dmy) {
-    return new Date(Number(dmy[3]), Number(dmy[2]) - 1, Number(dmy[1]))
-  }
-
-  return null
+/** La valeur porte une date d'apparence normale qui ne correspond à aucun jour. */
+export function hasImpossibleDate(raw: string): boolean {
+  const parts = readDateParts(raw)
+  return parts.length > 0 && parts.some((part) => toDate(part) === null)
 }
 
 /**
@@ -153,6 +222,138 @@ function checkVatArithmetic(fields: ExtractedField[]): SuspiciousElement[] {
   ]
 }
 
+// Libellés portant une information de temps. Comme pour l'IBAN, les contrôles
+// de date ne se déclenchent que si le libellé l'annonce : une référence de
+// dossier peut avoir la silhouette d'une date sans en être une.
+const DATE_LABEL = /\bdate\b|echeance|validite|expiration|emission|delivrance|periode/
+const ISSUE_LABEL = /date.*(emission|delivrance|edition|factur)|date\s*du\s*document/
+const VALIDITY_LABEL = /validite|expiration|\bvalable\b/
+
+const DAY_MS = 24 * 60 * 60 * 1000
+
+function checkImpossibleDates(fields: ExtractedField[]): SuspiciousElement[] {
+  return findFields(fields, DATE_LABEL)
+    .filter((field) => hasImpossibleDate(field.value))
+    .map((field, index) => ({
+      id: `check-impossible-date-${index + 1}`,
+      title: `Date inexistante — ${field.label}`,
+      description:
+        `La valeur lue « ${field.value} » ne correspond à aucun jour du calendrier. ` +
+        `Un document authentique ne porte pas une telle date. À confronter au ` +
+        `document : un chiffre mal lu produirait le même symptôme.`,
+      severity: 'MEDIUM' as const,
+      category: 'COHERENCE_DONNEES' as const,
+    }))
+}
+
+/** Une période dont la fin précède le début ne peut pas exister. */
+function checkPeriodOrder(fields: ExtractedField[]): SuspiciousElement[] {
+  return findFields(fields, DATE_LABEL)
+    .map((field) => ({ field, dates: parseDates(field.value) }))
+    .filter(({ dates }) => dates.length >= 2)
+    .filter(({ dates }) => dates[0].getTime() > dates[dates.length - 1].getTime())
+    .map(({ field }, index) => ({
+      id: `check-period-${index + 1}`,
+      title: `Période qui se termine avant de commencer — ${field.label}`,
+      description:
+        `La valeur lue « ${field.value} » décrit une période dont la fin précède ` +
+        `le début. Cette combinaison est impossible sur un document authentique. ` +
+        `Vérifier les deux dates sur le document.`,
+      severity: 'MEDIUM' as const,
+      category: 'COHERENCE_DONNEES' as const,
+    }))
+}
+
+/** Un document ne peut pas cesser d'être valable avant d'avoir été émis. */
+function checkValidityBeforeIssue(fields: ExtractedField[]): SuspiciousElement[] {
+  const issued = findField(fields, ISSUE_LABEL)
+  const validity = findField(fields, VALIDITY_LABEL)
+  if (!issued || !validity) return []
+
+  const issuedDate = parseDate(issued.value)
+  // La fin de validité est la dernière date du champ : « du X au Y » comme
+  // « jusqu'au Y » désignent tous deux Y.
+  const validityDates = parseDates(validity.value)
+  const validityEnd = validityDates[validityDates.length - 1]
+  if (!issuedDate || !validityEnd) return []
+  if (validityEnd.getTime() >= issuedDate.getTime()) return []
+
+  return [
+    {
+      id: 'check-validity-1',
+      title: 'Validité expirée avant la date d’émission',
+      description:
+        `Le document est daté du ${issued.value} et annonce une validité ` +
+        `« ${validity.value} », soit une expiration antérieure à sa propre émission. ` +
+        `Vérifier les deux champs sur le document.`,
+      severity: 'MEDIUM' as const,
+      category: 'COHERENCE_DONNEES' as const,
+    },
+  ]
+}
+
+/** Un document daté du futur n'a pas pu être émis. */
+function checkFutureIssue(fields: ExtractedField[], now: Date): SuspiciousElement[] {
+  const issued = findField(fields, ISSUE_LABEL)
+  if (!issued) return []
+
+  const issuedDate = parseDate(issued.value)
+  if (!issuedDate) return []
+  // Un jour de tolérance : fuseaux horaires et horloges décalées ne doivent pas
+  // suffire à faire signaler un document émis le jour même.
+  if (issuedDate.getTime() <= now.getTime() + DAY_MS) return []
+
+  return [
+    {
+      id: 'check-future-1',
+      title: 'Date d’émission postérieure à aujourd’hui',
+      description:
+        `Le document annonce une émission au ${issued.value}, soit une date à venir. ` +
+        `Un document ne peut pas avoir été émis dans le futur. Vérifier la date sur ` +
+        `le document.`,
+      severity: 'MEDIUM' as const,
+      category: 'COHERENCE_DONNEES' as const,
+    },
+  ]
+}
+
+// Taux de TVA en vigueur au Maroc, plus l'exonération. Le contrôle
+// arithmétique voisin valide HT + TVA = TTC : une facture affichant 17,3 % de
+// TVA le passe sans broncher tant que la somme tombe juste. Le taux, lui, ne
+// s'invente pas.
+const LEGAL_VAT_RATES = [0, 7, 10, 14, 20]
+const VAT_RATE_TOLERANCE = 0.5
+
+function checkVatRate(fields: ExtractedField[]): SuspiciousElement[] {
+  const ht = findField(fields, /total\s*ht|montant\s*ht|base\s*(hors\s*taxe|ht)/)
+  const vat = findField(fields, /\btva\b|taxe\s*sur\s*la\s*valeur/)
+  if (!ht || !vat) return []
+
+  const htValue = parseAmount(ht.value)
+  const vatValue = parseAmount(vat.value)
+  if (htValue === null || vatValue === null || htValue <= 0) return []
+
+  const rate = (vatValue / htValue) * 100
+  if (LEGAL_VAT_RATES.some((legal) => Math.abs(rate - legal) <= VAT_RATE_TOLERANCE)) {
+    return []
+  }
+
+  return [
+    {
+      id: 'check-tva-rate-1',
+      title: 'Taux de TVA hors barème',
+      description:
+        `${vatValue.toLocaleString('fr-FR')} de TVA sur ${htValue.toLocaleString('fr-FR')} ` +
+        `hors taxes donne un taux de ${rate.toLocaleString('fr-FR', {
+          maximumFractionDigits: 2,
+        })} %, qui ne correspond à aucun taux en vigueur (0, 7, 10, 14 ou 20 %). ` +
+        `Vérifier les deux montants sur le document.`,
+      severity: 'MEDIUM' as const,
+      category: 'COHERENCE_DONNEES' as const,
+    },
+  ]
+}
+
 function checkDates(fields: ExtractedField[]): SuspiciousElement[] {
   const issued = findField(fields, /date.*(factur|emission|edition)|date\s*du\s*document/)
   const due = findField(fields, /echeance|date\s*limite|date\s*de\s*paiement/)
@@ -214,11 +415,24 @@ function checkIban(fields: ExtractedField[]): SuspiciousElement[] {
     }))
 }
 
-/** Lance tous les contrôles sur les champs extraits. */
-export function runDeterministicChecks(fields: ExtractedField[]): SuspiciousElement[] {
+/**
+ * Lance tous les contrôles sur les champs extraits.
+ *
+ * `now` est un paramètre pour que les contrôles restent testables : un test
+ * qui dépendrait de l'horloge réelle passerait ou échouerait selon le jour.
+ */
+export function runDeterministicChecks(
+  fields: ExtractedField[],
+  now: Date = new Date(),
+): SuspiciousElement[] {
   return [
     ...checkIce(fields),
     ...checkVatArithmetic(fields),
+    ...checkVatRate(fields),
+    ...checkImpossibleDates(fields),
+    ...checkPeriodOrder(fields),
+    ...checkValidityBeforeIssue(fields),
+    ...checkFutureIssue(fields, now),
     ...checkDates(fields),
     ...checkIban(fields),
   ]
@@ -239,7 +453,8 @@ function summarizeChecks(findings: SuspiciousElement[]): string {
   if (findings.length === 0) {
     return (
       'Contrôles automatiques : aucun écart relevé sur les champs vérifiables ' +
-      '(identifiant ICE, clé IBAN, arithmétique HT/TVA/TTC, ordre des dates).'
+      '(identifiant ICE, clé IBAN, arithmétique et taux de TVA, existence et ' +
+      'cohérence des dates).'
     )
   }
 
