@@ -43,20 +43,20 @@ export function RiskScoreCard({
         <div className="absolute inset-0 flex flex-col items-center justify-center">
           <span className="font-display text-3xl tabular-nums">{clamped}</span>
           <span className="text-[10px] uppercase tracking-wide text-[var(--color-ink-muted)]">
-            sur 100
+            out of 100
           </span>
         </div>
       </div>
 
       <div className="min-w-0">
         <p className="text-xs uppercase tracking-wide text-[var(--color-ink-muted)]">
-          Score de risque
+          Risk score
         </p>
         <div className="mt-1.5">
           <Badge level={level}>{RISK_LABELS[level]}</Badge>
         </div>
         <p className="mt-3 text-sm">
-          <span className="text-[var(--color-ink-muted)]">Type détecté : </span>
+          <span className="text-[var(--color-ink-muted)]">Detected type: </span>
           <span className="font-medium">{documentType}</span>
         </p>
       </div>
