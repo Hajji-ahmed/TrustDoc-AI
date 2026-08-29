@@ -469,10 +469,71 @@ signal the challenge produced.
 \newpage
 
 %% ------------------------------------------------------ 6
+\heading{6.}{Fourth external validation --- Actemium}
+
+\vspace{2pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{26mm}
+                  >{\raggedright\arraybackslash}p{\dimexpr\linewidth-33mm}@{}}
+\rowcolor{zebra}\textbf{\color{navy}Company} & Actemium \\[3pt]
+\textbf{\color{navy}Reviewer} & Khalid Boujtat, Electrical Engineer --- written
+feedback, 29 August 2026 \\[3pt]
+\rowcolor{zebra}\textbf{\color{navy}Material} & Officially certified documents,
+described by the reviewer as fully reliable. No altered or invalid document was
+submitted. \\[3pt]
+\textbf{\color{navy}Method} & Unassisted use of the deployed prototype, with the
+stated role of the tool as the only briefing. \\
+\end{tabular}
+
+\shot{assets/feedback-actemium.png}{Feedback received from Khalid Boujtat (Actemium), reproduced verbatim.}
+
+\vspace{2pt}
+\begin{goodbox}{The evidence the dossier was missing}
+Genuine, officially certified documents went through the prototype and came back
+unflagged. This is the first independent confirmation that the tool does not
+raise a false positive on real documents --- the exact gap left open by the
+second validation, whose control document was never scored.
+
+\vspace{3pt}
+The reviewer states his own limit without being asked: no false, altered or
+invalid document was tested, so his run says nothing about detection. Detection
+and absence of false positives are now each established by a different reviewer,
+and neither by the same one.
+\end{goodbox}
+
+\vspace{4pt}
+\begin{badbox}{The wording problem, no longer an opinion}
+The reviewer describes the tool as a \emph{``document authentication system''}
+and reports that it \emph{``correctly identified them as certified and
+trustworthy''}.
+
+\vspace{3pt}
+The prototype certifies nothing. It reported an absence of detected anomalies,
+and a qualified engineer read that as certification. The third reviewer had
+recommended dropping any wording that suggests authenticity; this run shows the
+misreading actually happening, on someone competent, with no ambiguity of
+language. That turns an interface recommendation into a demonstrated defect ---
+and it is the one finding in this dossier that a reviewer produced without
+intending to.
+\end{badbox}
+
+\vspace{4pt}
+\begin{note}{Second independent convergence on the same segments}
+Asked nothing about markets, the reviewer proposes \textbf{educational
+institutions and government administrations} for certificate verification ---
+the same two segments the second reviewer named on his own initiative, from a
+different company and a different role.
+
+\vspace{3pt}
+Two unprompted mentions do not make a market study, but they are two more than
+the beachhead in deliverable 04 has received.
+\end{note}
+
+\newpage
+
+%% ------------------------------------------------------ 7
 % Le tableau à remplir et la synthèse ouvrent une page à eux : laissés à la
-% suite, ils coupaient la section finale entre deux pages et laissaient la
-% checklist seule sur la dernière.
-\heading{6.}{Validation register}
+% suite, ils coupaient la section finale entre deux pages.
+\heading{7.}{Validation register}
 
 One line per company contacted during the challenge. Only verified
 conversations and real feedback are recorded here; the blank rows are reserved
@@ -516,21 +577,27 @@ wording suggesting authenticity in favour of a risk level with its reason. &
 Proposals recorded against the current state as a roadmap. Interface wording to
 revise. Volume under time pressure confirmed as the qualifying condition.
 \\ \hline
-\rule{0pt}{16mm} & & & \\ \hline
+Actemium &
+Khalid Boujtat\newline \textit{Electrical Engineer} &
+Officially certified documents went through unflagged --- first confirmation of
+no false positive on genuine documents. Detection untested by him, and he says
+so. Read the result as the document being ``certified and trustworthy'', which
+the tool never claims. Proposes education and public administration. &
+Absence of false positives now evidenced. Interface wording confirmed as a real
+defect, not a preference. Next: have him run an altered document. \\ \hline
 \rule{0pt}{16mm} & & & \\ \hline
 \end{tabular}
 
 %% ------------------------------------------------------ 6
-\heading{7.}{Summary and evidence checklist}
+\heading{8.}{Summary}
 
-\fld{Completed} Three external companies, three reviewers --- an HR
-practitioner, a company director and a project manager --- seven documents
-tested, four defects found and four corrections shipped within the challenge
-window.
+\fld{Completed} Four external companies, four reviewers --- an HR practitioner,
+a company director, a project manager and an engineer --- four defects found and
+four corrections shipped within the challenge window.
 
 \fld{Confirmed from outside} The boundary the product was built on --- report
-anomalies, never certify authenticity --- was reached independently by all three
-reviewers, none of them told it and none aware of the others. Two of the
+anomalies, never certify authenticity --- was reached independently by every
+reviewer, none of them told it and none aware of the others. Two of the
 corrections made after the first validation are visible in the second reviewer's
 test output. No reviewer asked for more detection categories.
 
@@ -538,12 +605,17 @@ test output. No reviewer asked for more detection categories.
 prototype isolated the planted defect, named it correctly and localised it on
 the document.
 
-\fld{Not yet demonstrated} The absence of false positives. The control document
-of that same test was never scored, and the two-page invoice from the first
-validation has not been re-run.
+\fld{Absence of false positives demonstrated} Officially certified documents,
+submitted by a fourth reviewer, went through unflagged. The two properties are
+evidenced by two different people, which is stronger than one reviewer reporting
+both.
 
-\fld{Next step} Run Document A, the control. It is the cheapest test remaining
-and the only one that turns the current evidence into a complete result.
+\fld{Confirmed as a defect} The interface lets its output be read as
+certification. The third reviewer predicted it; the fourth did it.
+
+\fld{Next steps} Have the fourth reviewer run an altered document, so detection
+and its absence come from the same hand. Re-run the two-page invoice from the
+first validation. Revise the wording that suggests authenticity.
 
 
 \end{document}
